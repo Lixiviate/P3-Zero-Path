@@ -26,14 +26,15 @@ ZeroPath is a full-stack web application designed to help users reduce their car
 
 ## References
 
-- Code Assistance:
+- **Code Assistance:**
 
   - [MDN Web Docs](https://developer.mozilla.org/en-US/)
   - [W3Schools](https://www.w3schools.com/)
   - [edX Xpert Learning Assistant](https://www.edx.org/)
   - [Stack Overflow](https://stackoverflow.com/)
 
-- Development Resources:
+- **Development Resources:**
+
   - [bcrypt](https://www.npmjs.com/package/bcrypt) - For hashing passwords securely.
   - [dotenv](https://www.npmjs.com/package/dotenv) - For loading environment variables from a `.env` file.
   - [Express.js](https://www.npmjs.com/package/express) - For server-side routing and middleware handling.

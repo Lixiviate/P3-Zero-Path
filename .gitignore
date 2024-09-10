@@ -134,3 +134,4 @@ package-lock.json
 .vscode
 .DS_Store
 .env
+.notes.md
