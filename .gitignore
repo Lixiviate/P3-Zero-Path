@@ -131,6 +131,7 @@ dist
 
 # Misc
 package-lock.json
+/build
 .vscode
 .DS_Store
 .env
