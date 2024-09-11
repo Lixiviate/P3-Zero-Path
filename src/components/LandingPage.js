@@ -170,16 +170,18 @@ const LandingPage = () => {
         </div>
       </div>
       <style jsx global>{`
-        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;700&display=swap');
+        @import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;700&display=swap");
         body {
-          font-family: 'Cormorant Garamond', serif;
+          font-family: "Cormorant Garamond", serif;
+        }
         .glow-effect {
-    box-shadow: 0 0 10px rgba(72, 191, 227, 0.4); 
-    transition: box-shadow 0.3s ease;
-          } 
+          box-shadow: 0 0 10px rgba(72, 191, 227, 0.4);
+          transition: box-shadow 0.3s ease;
+        }
         .glow-effect:hover {
-    box-shadow: 0 0 25px rgba(72, 191, 227, 0.8), 0 0 40px rgba(72, 191, 227, 0.6); 
-          }
+          box-shadow: 0 0 25px rgba(72, 191, 227, 0.8),
+            0 0 40px rgba(72, 191, 227, 0.6);
+        }
       `}</style>
     </div>
   );
