@@ -30,7 +30,9 @@ const LandingPage = () => {
     const canvas = canvasRef.current;
     const ctx = canvas.getContext("2d");
 
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    // Set the canvas background to blue
+    ctx.fillStyle = "#2563eb";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     const time = Date.now() * 0.0005;
     const currents = [];
