@@ -6,6 +6,7 @@ const LandingPage = () => {
   const bubblesRef = useRef([]);
   const animationRef = useRef(null);
 
+  // Creates a new ripple effect at the given coordinates
   const createRipple = useCallback((x, y) => {
     ripplesRef.current.push({
       x,
@@ -17,6 +18,7 @@ const LandingPage = () => {
     });
   }, []);
 
+  // Creates a new bubble at the bottom of the canvas
   const createBubble = useCallback(() => {
     bubblesRef.current.push({
       x: Math.random() * window.innerWidth,
@@ -26,12 +28,14 @@ const LandingPage = () => {
     });
   }, []);
 
+  // Handles the main animation loop for water effects
   const animate = useCallback(() => {
     const canvas = canvasRef.current;
     const ctx = canvas.getContext("2d");
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+    // Draw water currents
     const time = Date.now() * 0.0005;
     const currents = [];
     for (let i = 0; i < 5; i++) {
@@ -54,6 +58,7 @@ const LandingPage = () => {
       ctx.stroke();
     });
 
+    // Update and draw ripples
     ripplesRef.current = ripplesRef.current.filter((ripple) => {
       ripple.radius += ripple.speed;
       ripple.opacity = 1 - (ripple.radius / ripple.maxRadius) ** 2;
@@ -68,6 +73,7 @@ const LandingPage = () => {
       return true;
     });
 
+    // Create and update bubbles
     if (Math.random() < 0.1) createBubble();
     bubblesRef.current.forEach((bubble, index) => {
       bubble.y -= bubble.speed;
@@ -84,6 +90,7 @@ const LandingPage = () => {
     animationRef.current = requestAnimationFrame(animate);
   }, [createBubble]);
 
+  // Sets up canvas, event listeners, and starts animation
   useEffect(() => {
     const canvas = canvasRef.current;
     const resizeCanvas = () => {
