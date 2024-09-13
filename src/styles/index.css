@@ -1,0 +1,19 @@
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
+
+@import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;700&display=swap");
+
+body {
+  font-family: "Cormorant Garamond", serif;
+}
+
+.glow-effect {
+  box-shadow: 0 0 10px rgba(72, 191, 227, 0.4);
+  transition: box-shadow 0.3s ease;
+}
+
+.glow-effect:hover {
+  box-shadow: 0 0 25px rgba(72, 191, 227, 0.8),
+    0 0 40px rgba(72, 191, 227, 0.6);
+}
