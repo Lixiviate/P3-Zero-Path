@@ -35,29 +35,6 @@ const LandingPage = () => {
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    // Draw water currents
-    const time = Date.now() * 0.0005;
-    const currents = [];
-    for (let i = 0; i < 5; i++) {
-      currents.push({
-        y: (Math.sin(time + i * 0.5) * 0.5 + 0.5) * canvas.height,
-        amplitude: Math.sin(time * 0.1 + i) * 10 + 20,
-        wavelength: Math.sin(time * 0.02 + i * 0.3) * 80 + 150,
-      });
-    }
-
-    ctx.strokeStyle = "rgba(255, 255, 255, 0.1)";
-    ctx.lineWidth = 2;
-    currents.forEach((current) => {
-      ctx.beginPath();
-      for (let x = 0; x < canvas.width; x += 10) {
-        const y =
-          current.y + Math.sin(x / current.wavelength) * current.amplitude;
-        ctx.lineTo(x, y);
-      }
-      ctx.stroke();
-    });
-
     // Update and draw ripples
     ripplesRef.current = ripplesRef.current.filter((ripple) => {
       ripple.radius += ripple.speed;
