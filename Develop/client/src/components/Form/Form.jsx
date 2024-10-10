@@ -1,5 +1,3 @@
-import React from "react";
-
 const Form = () => {
   return (
     <div className="bg-blue-400 bg-opacity-40 backdrop-filter backdrop-blur-lg rounded-xl p-8 shadow-xl max-w-md w-full">

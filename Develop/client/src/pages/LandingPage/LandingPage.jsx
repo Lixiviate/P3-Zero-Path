@@ -1,6 +1,5 @@
-import React from "react";
-import Canvas from "../Canvas/Canvas";
-import Form from "../Form/Form";
+import Canvas from "../../components/Canvas/Canvas";
+import Form from "../../components/Form/Form";
 
 const LandingPage = () => {
   return (
