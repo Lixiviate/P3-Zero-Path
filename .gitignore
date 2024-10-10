@@ -136,3 +136,4 @@ package-lock.json
 .DS_Store
 .env
 .notes.md
+.todo.md
