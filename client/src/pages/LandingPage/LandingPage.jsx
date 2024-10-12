@@ -1,6 +1,6 @@
 import Canvas from "../../components/Canvas/Canvas";
-import Form from "../../components/Form/Form";
-import "./LandingPage.css"; // Make sure this import exists
+import AuthForm from "../../components/Form/AuthForm";
+import "./LandingPage.css";
 
 const LandingPage = () => {
   return (
@@ -14,7 +14,7 @@ const LandingPage = () => {
         <p className="text-2xl mb-8 text-white">
           A Tranquil Journey to Sustainability
         </p>
-        <Form />
+        <AuthForm /> {/* Renders the new AuthForm with tabs */}
       </div>
     </div>
   );
