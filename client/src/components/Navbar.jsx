@@ -37,16 +37,22 @@ const AppNavbar = () => {
         centered
         className="backdrop-filter backdrop-blur-lg"
       >
-        <Modal.Header closeButton className="bg-blue-400 bg-opacity-40">
-          <Modal.Title id="about-modal" className="text-white">
+        <Modal.Header
+          closeButton
+          className="bg-gradient-to-r from-teal-300 to-blue-500"
+        >
+          <Modal.Title id="about-modal" className="text-black font-bold">
             About ZeroPath
           </Modal.Title>
         </Modal.Header>
-        <Modal.Body className="bg-blue-400 bg-opacity-40 backdrop-filter backdrop-blur-lg rounded-xl p-8 shadow-xl text-white">
+        <Modal.Body className="bg-gradient-to-b from-teal-300 to-blue-500 p-8 shadow-xl text-black">
           <h2 className="text-3xl font-bold mb-6">Welcome to ZeroPath</h2>
           <p className="text-lg mb-4">
             ZeroPath is designed to guide and empower individuals on their
-            journey to a more sustainable and eco-friendly lifestyle.
+            journey to a more sustainable and eco-friendly lifestyle. Whether
+            you're just starting or you're already eco-conscious, ZeroPath is
+            your companion on the journey toward a greener future. Together, we
+            can make a lasting difference.
           </p>
           <h3 className="text-2xl font-semibold mb-4">Our Mission</h3>
           <p className="text-lg mb-4">
@@ -73,12 +79,6 @@ const AppNavbar = () => {
               help you contribute to a healthier planet.
             </li>
           </ul>
-          <h3 className="text-2xl font-semibold mb-4">Join Us</h3>
-          <p className="text-lg">
-            Whether you're just starting or you're already eco-conscious,
-            ZeroPath is your companion on the journey toward a greener future.
-            Together, we can make a lasting difference.
-          </p>
         </Modal.Body>
       </Modal>
     </>
