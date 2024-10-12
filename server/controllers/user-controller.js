@@ -2,7 +2,7 @@ const { User } = require("../models");
 const { signToken } = require("../utils/auth");
 
 module.exports = {
-  // Get the currently logged-in user
+  // Get a single user by either their id or their username
   async getSingleUser({ user = null, params }, res) {
     const foundUser = await User.findOne({
       $or: [
@@ -20,7 +20,7 @@ module.exports = {
     res.json(foundUser);
   },
 
-  // Create a new user (sign up)
+  // Create a user, sign a token, and send it back
   async createUser({ body }, res) {
     const user = await User.create(body);
 
@@ -32,9 +32,15 @@ module.exports = {
     res.json({ token, user });
   },
 
-  // Login user
+  // Login a user, sign a token, and send it back
+  // Check login input as either email or username
   async login({ body }, res) {
-    const user = await User.findOne({ email: body.email });
+    // Check if login input is an email or username
+    const loginInput = body.login.includes("@")
+      ? { email: body.login }
+      : { username: body.login };
+
+    const user = await User.findOne(loginInput);
 
     if (!user) {
       return res.status(400).json({ message: "Can't find this user" });
@@ -43,7 +49,7 @@ module.exports = {
     const correctPw = await user.isCorrectPassword(body.password);
 
     if (!correctPw) {
-      return res.status(400).json({ message: "Wrong password!" });
+      return res.status(400).json({ message: "Incorrect password!" });
     }
 
     const token = signToken(user);

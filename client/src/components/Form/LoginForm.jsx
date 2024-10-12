@@ -4,15 +4,15 @@ import { LOGIN_USER } from "../../utils/mutations";
 import Auth from "../../utils/auth";
 
 const LoginForm = () => {
-  const [loginFormData, setLoginFormData] = useState({
-    email: "",
-    password: "",
-  });
+  const [formState, setFormState] = useState({ login: "", password: "" });
   const [login, { error }] = useMutation(LOGIN_USER);
 
-  const handleInputChange = (event) => {
+  const handleChange = (event) => {
     const { name, value } = event.target;
-    setLoginFormData({ ...loginFormData, [name]: value });
+    setFormState({
+      ...formState,
+      [name]: value,
+    });
   };
 
   const handleFormSubmit = async (event) => {
@@ -20,33 +20,32 @@ const LoginForm = () => {
 
     try {
       const { data } = await login({
-        variables: { ...loginFormData },
+        variables: { ...formState },
       });
 
       Auth.login(data.login.token);
-    } catch (err) {
-      console.error(err);
+    } catch (e) {
+      console.error(e);
     }
   };
 
   return (
-    <form className="space-y-4" onSubmit={handleFormSubmit}>
+    <form onSubmit={handleFormSubmit} className="space-y-4">
       <div>
         <label
-          htmlFor="email"
+          htmlFor="login"
           className="block text-sm font-medium text-white mb-1 text-left"
         >
-          Email
+          Username or Email
         </label>
         <input
-          type="email"
-          id="email"
-          name="email"
+          type="text"
+          id="login"
+          name="login"
           className="w-full px-3 py-2 rounded-md shadow-sm bg-blue-300 bg-opacity-30 text-white placeholder-blue-100 border border-blue-200 focus:border-blue-400"
-          placeholder="Enter your email"
-          value={loginFormData.email}
-          onChange={handleInputChange}
-          required
+          placeholder="Enter your username or email"
+          value={formState.login}
+          onChange={handleChange}
         />
       </div>
       <div>
@@ -62,9 +61,8 @@ const LoginForm = () => {
           name="password"
           className="w-full px-3 py-2 rounded-md shadow-sm bg-blue-300 bg-opacity-30 text-white placeholder-blue-100 border border-blue-200 focus:border-blue-400"
           placeholder="Enter your password"
-          value={loginFormData.password}
-          onChange={handleInputChange}
-          required
+          value={formState.password}
+          onChange={handleChange}
         />
       </div>
       <button
@@ -73,7 +71,7 @@ const LoginForm = () => {
       >
         Login
       </button>
-      {error && <div className="text-red-500 mt-2">Login failed!</div>}
+      {error && <div className="text-red-500">Login failed!</div>}
     </form>
   );
 };
