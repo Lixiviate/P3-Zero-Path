@@ -49,12 +49,16 @@ const router = createBrowserRouter([
         path: "/home",
         element: <Home />,
       },
+      {
+        path: "*",
+        element: <h1>Page not found!</h1>,
+      },
     ],
   },
 ]);
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <ApolloProvider client={client}>
-    <RouterProvider router={router} />
+    <RouterProvider router={router} />{" "}
   </ApolloProvider>
 );
