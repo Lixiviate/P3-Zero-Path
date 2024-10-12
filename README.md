@@ -1,7 +1,5 @@
 # P3-Zero-Path
 
-t
-
 ## Project Description
 
 ZeroPath is a full-stack web application designed to help users reduce their carbon footprint and embark on a journey to sustainability.
