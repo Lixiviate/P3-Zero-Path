@@ -1,4 +1,3 @@
-// PATH: client/src/components/Form/SignupForm.jsx
 import { useState } from "react";
 import { useMutation } from "@apollo/client";
 import { ADD_USER } from "../../utils/mutations";

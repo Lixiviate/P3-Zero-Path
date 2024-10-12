@@ -18,7 +18,6 @@ const userSchema = new Schema(
       type: String,
       required: true,
     },
-    // Remove the savedBooks field, no need for a book schema here anymore
   },
   {
     toJSON: {

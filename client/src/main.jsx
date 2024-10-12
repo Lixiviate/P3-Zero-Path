@@ -1,4 +1,3 @@
-// PATH: client/src/main.jsx
 import ReactDOM from "react-dom/client";
 import {
   ApolloProvider,
@@ -8,12 +7,12 @@ import {
 } from "@apollo/client";
 import { setContext } from "@apollo/client/link/context";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import "bootstrap/dist/css/bootstrap.min.css"; // Ensure Bootstrap is loaded
+import "bootstrap/dist/css/bootstrap.min.css";
 import "./styles/index.css";
 
 import App from "./App";
 import LandingPage from "./pages/LandingPage/LandingPage";
-import Home from "./pages/Home"; // Replace this with actual Home component if needed
+import Home from "./pages/Home";
 
 // Create a link to the GraphQL API
 const httpLink = createHttpLink({
