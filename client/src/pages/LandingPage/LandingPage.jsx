@@ -1,5 +1,6 @@
 import Canvas from "../../components/Canvas/Canvas";
 import Form from "../../components/Form/Form";
+import "./LandingPage.css"; // Make sure this import exists
 
 const LandingPage = () => {
   return (
