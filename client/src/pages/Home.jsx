@@ -1,5 +1,3 @@
-// ZeroPath: client/src/pages/Home.jsx
-
 const Home = () => {
   return (
     <div>
@@ -8,4 +6,4 @@ const Home = () => {
   );
 };
 
-export default Home; // Add this line
+export default Home;

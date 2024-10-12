@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useMutation } from "@apollo/client";
 import { ADD_USER } from "../../utils/mutations";
+import { useNavigate } from "react-router-dom";
 import Auth from "../../utils/auth";
 
 const SignupForm = () => {
@@ -10,6 +11,7 @@ const SignupForm = () => {
     password: "",
   });
   const [addUser, { error }] = useMutation(ADD_USER);
+  const navigate = useNavigate();
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
@@ -25,6 +27,7 @@ const SignupForm = () => {
       });
 
       Auth.login(data.addUser.token);
+      navigate("/home");
     } catch (err) {
       console.error(err);
     }
