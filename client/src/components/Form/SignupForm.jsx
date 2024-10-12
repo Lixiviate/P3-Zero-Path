@@ -1,6 +1,37 @@
+import { useState } from "react";
+import { useMutation } from "@apollo/client";
+import { ADD_USER } from "../../utils/mutations";
+import Auth from "../../utils/auth";
+
 const SignupForm = () => {
+  const [signupFormData, setSignupFormData] = useState({
+    username: "",
+    email: "",
+    password: "",
+  });
+  const [addUser, { error }] = useMutation(ADD_USER);
+
+  const handleInputChange = (event) => {
+    const { name, value } = event.target;
+    setSignupFormData({ ...signupFormData, [name]: value });
+  };
+
+  const handleFormSubmit = async (event) => {
+    event.preventDefault();
+
+    try {
+      const { data } = await addUser({
+        variables: { ...signupFormData },
+      });
+
+      Auth.login(data.addUser.token);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   return (
-    <form className="space-y-4">
+    <form className="space-y-4" onSubmit={handleFormSubmit}>
       <div>
         <label
           htmlFor="username"
@@ -14,6 +45,9 @@ const SignupForm = () => {
           name="username"
           className="w-full px-3 py-2 rounded-md shadow-sm bg-blue-300 bg-opacity-30 text-white placeholder-blue-100 border border-blue-200 focus:border-blue-400"
           placeholder="Enter your username"
+          value={signupFormData.username}
+          onChange={handleInputChange}
+          required
         />
       </div>
       <div>
@@ -29,6 +63,9 @@ const SignupForm = () => {
           name="email"
           className="w-full px-3 py-2 rounded-md shadow-sm bg-blue-300 bg-opacity-30 text-white placeholder-blue-100 border border-blue-200 focus:border-blue-400"
           placeholder="Enter your email"
+          value={signupFormData.email}
+          onChange={handleInputChange}
+          required
         />
       </div>
       <div>
@@ -44,6 +81,9 @@ const SignupForm = () => {
           name="password"
           className="w-full px-3 py-2 rounded-md shadow-sm bg-blue-300 bg-opacity-30 text-white placeholder-blue-100 border border-blue-200 focus:border-blue-400"
           placeholder="Enter your password"
+          value={signupFormData.password}
+          onChange={handleInputChange}
+          required
         />
       </div>
       <button
@@ -52,6 +92,7 @@ const SignupForm = () => {
       >
         Sign Up
       </button>
+      {error && <div className="text-red-500 mt-2">Signup failed!</div>}
     </form>
   );
 };
