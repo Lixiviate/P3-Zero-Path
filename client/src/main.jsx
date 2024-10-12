@@ -1,5 +1,12 @@
-// ZeroPath: client/src/main.jsx
+// PATH: client/src/main.jsx
 import ReactDOM from "react-dom/client";
+import {
+  ApolloProvider,
+  ApolloClient,
+  InMemoryCache,
+  createHttpLink,
+} from "@apollo/client";
+import { setContext } from "@apollo/client/link/context";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css"; // Ensure Bootstrap is loaded
 import "./styles/index.css";
@@ -8,24 +15,47 @@ import App from "./App";
 import LandingPage from "./pages/LandingPage/LandingPage";
 import Home from "./pages/Home"; // Replace this with actual Home component if needed
 
+// Create a link to the GraphQL API
+const httpLink = createHttpLink({
+  uri: "/graphql",
+});
+
+// Set the auth token in the headers
+const authLink = setContext((_, { headers }) => {
+  const token = localStorage.getItem("id_token");
+  return {
+    headers: {
+      ...headers,
+      authorization: token ? `Bearer ${token}` : "",
+    },
+  };
+});
+
+// Initialize Apollo Client
+const client = new ApolloClient({
+  link: authLink.concat(httpLink),
+  cache: new InMemoryCache(),
+});
+
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <App />, // Main App component that contains the Navbar and Outlet
-    errorElement: <h1 className="display-2">Page not found!</h1>,
+    element: <App />,
     children: [
       {
-        index: true, // This ensures the landing page is rendered on the root "/"
+        index: true,
         element: <LandingPage />,
       },
       {
         path: "/home",
-        element: <Home />, // Example additional route
+        element: <Home />,
       },
     ],
   },
 ]);
 
 ReactDOM.createRoot(document.getElementById("root")).render(
-  <RouterProvider router={router} />
+  <ApolloProvider client={client}>
+    <RouterProvider router={router} />
+  </ApolloProvider>
 );
