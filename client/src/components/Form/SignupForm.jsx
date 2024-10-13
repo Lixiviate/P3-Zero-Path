@@ -27,7 +27,7 @@ const SignupForm = () => {
       });
 
       Auth.login(data.addUser.token);
-      navigate("/home");
+      navigate("/Dashboard");
     } catch (err) {
       console.error(err);
     }

@@ -26,7 +26,7 @@ const LoginForm = () => {
       });
 
       Auth.login(data.login.token);
-      navigate("/home");
+      navigate("/dashboard");
     } catch (e) {
       console.error(e);
     }

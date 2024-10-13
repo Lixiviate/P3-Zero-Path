@@ -1,10 +1,25 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Navbar, Nav, Container, Modal } from "react-bootstrap";
 import Auth from "../utils/auth";
 
 const AppNavbar = () => {
+  const [loggedIn, setLoggedIn] = useState(Auth.loggedIn());
   const [showModal, setShowModal] = useState(false);
+
+  useEffect(() => {
+    const handleLoginStatusChange = () => {
+      setLoggedIn(Auth.loggedIn());
+    };
+
+    window.addEventListener("userLoggedIn", handleLoginStatusChange);
+    window.addEventListener("userLoggedOut", handleLoginStatusChange);
+
+    return () => {
+      window.removeEventListener("userLoggedIn", handleLoginStatusChange);
+      window.removeEventListener("userLoggedOut", handleLoginStatusChange);
+    };
+  }, []);
 
   return (
     <>
@@ -17,10 +32,15 @@ const AppNavbar = () => {
           <Navbar.Collapse id="navbar" className="d-flex flex-row-reverse">
             <Nav className="ml-auto d-flex">
               <Nav.Link as={Link} to="/">
-                Main
+                Home
               </Nav.Link>
-              {Auth.loggedIn() ? (
-                <Nav.Link onClick={Auth.logout}>Logout</Nav.Link>
+              {loggedIn ? (
+                <>
+                  <Nav.Link as={Link} to="/dashboard">
+                    Dashboard
+                  </Nav.Link>
+                  <Nav.Link onClick={Auth.logout}>Logout</Nav.Link>
+                </>
               ) : (
                 <Nav.Link onClick={() => setShowModal(true)}>About</Nav.Link>
               )}
@@ -29,6 +49,7 @@ const AppNavbar = () => {
         </Container>
       </Navbar>
 
+      {/* About modal */}
       <Modal
         size="lg"
         show={showModal}
