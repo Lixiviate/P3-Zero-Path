@@ -20,7 +20,12 @@ const AppNavbar = () => {
                 Main
               </Nav.Link>
               {Auth.loggedIn() ? (
-                <Nav.Link onClick={Auth.logout}>Logout</Nav.Link>
+                <>
+                  <Nav.Link as={Link} to="/dashboard">
+                    Dashboard
+                  </Nav.Link>
+                  <Nav.Link onClick={Auth.logout}>Logout</Nav.Link>
+                </>
               ) : (
                 <Nav.Link onClick={() => setShowModal(true)}>About</Nav.Link>
               )}
