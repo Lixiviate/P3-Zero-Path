@@ -1,14 +1,18 @@
+const { AuthenticationError } = require("apollo-server-express");
 const { User } = require("../models");
-const { signToken, AuthenticationError } = require("../utils/auth");
+const { signToken } = require("../utils/auth");
 const bcrypt = require("bcrypt");
 
 const resolvers = {
   Query: {
     me: async (parent, args, context) => {
       if (context.user) {
-        return await User.findOne({ _id: context.user._id });
+        const userData = await User.findById(context.user._id).select(
+          "-__v -password"
+        );
+        return userData;
       }
-      throw new AuthenticationError("You need to be logged in!");
+      throw new AuthenticationError("Not logged in");
     },
   },
 
@@ -20,13 +24,12 @@ const resolvers = {
         : { username: login };
 
       const user = await User.findOne(loginInput);
-
       if (!user) {
         throw new AuthenticationError("Incorrect credentials");
       }
 
-      const correctPw = await user.isCorrectPassword(password);
-
+      // Verify the password with bcrypt
+      const correctPw = await bcrypt.compare(password, user.password);
       if (!correctPw) {
         throw new AuthenticationError("Incorrect credentials");
       }
@@ -37,58 +40,72 @@ const resolvers = {
 
     addUser: async (parent, { username, email, password }) => {
       // Check if username or email is already in use
-      const existingUser = await User.findOne({
-        $or: [{ username }, { email }],
-      });
+      const existingUserByUsername = await User.findOne({ username });
+      if (existingUserByUsername) {
+        throw new Error("Username already in use");
+      }
 
-      if (existingUser) {
-        throw new AuthenticationError(
-          "Username or Email already exists. Please try again."
-        );
+      const existingUserByEmail = await User.findOne({ email });
+      if (existingUserByEmail) {
+        throw new Error("Email already in use");
       }
 
       const user = await User.create({ username, email, password });
       const token = signToken(user);
+
       return { token, user };
     },
 
     updateUser: async (parent, { username, email, password }, context) => {
       if (!context.user) {
-        throw new AuthenticationError("You need to be logged in!");
+        throw new AuthenticationError(
+          "You need to be logged in to update your profile!"
+        );
       }
 
-      // Check if the new username or email is already in use by another user
-      if (username || email) {
-        const existingUser = await User.findOne({
-          $or: [{ username }, { email }],
-          _id: { $ne: context.user._id },
-        });
+      // Fetch the currently logged-in user
+      const user = await User.findById(context.user._id);
 
-        if (existingUser) {
-          return {
-            success: false,
-            message: "Username or Email is already in use.",
-            user: null,
-          };
+      // Check and update username if provided
+      if (username && username !== user.username) {
+        const existingUsername = await User.findOne({ username });
+        if (
+          existingUsername &&
+          existingUsername._id.toString() !== user._id.toString()
+        ) {
+          throw new Error("Username already in use");
         }
+        user.username = username;
       }
 
-      // Update user data
-      const updatedUser = await User.findById(context.user._id);
+      // Check and update email if provided
+      if (email && email !== user.email) {
+        const existingEmail = await User.findOne({ email });
+        if (
+          existingEmail &&
+          existingEmail._id.toString() !== user._id.toString()
+        ) {
+          throw new Error("Email already in use");
+        }
+        user.email = email;
+      }
 
-      if (username) updatedUser.username = username;
-      if (email) updatedUser.email = email;
+      // Check and update password if provided, re-hash it
       if (password) {
         const saltRounds = 10;
-        updatedUser.password = await bcrypt.hash(password, saltRounds);
+        user.password = await bcrypt.hash(password, saltRounds);
       }
 
-      await updatedUser.save();
+      // Save the updated user
+      await user.save();
+
+      // Generate a new token after successful update
+      const token = signToken(user);
 
       return {
         success: true,
-        message: "User profile updated successfully",
-        user: updatedUser,
+        token,
+        user,
       };
     },
   },
