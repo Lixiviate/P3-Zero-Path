@@ -8,14 +8,16 @@ const AppNavbar = () => {
   const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
-    const handleStorageChange = () => {
+    const handleLoginStatusChange = () => {
       setLoggedIn(Auth.loggedIn());
     };
 
-    window.addEventListener("storage", handleStorageChange);
+    window.addEventListener("userLoggedIn", handleLoginStatusChange);
+    window.addEventListener("userLoggedOut", handleLoginStatusChange);
 
     return () => {
-      window.removeEventListener("storage", handleStorageChange);
+      window.removeEventListener("userLoggedIn", handleLoginStatusChange);
+      window.removeEventListener("userLoggedOut", handleLoginStatusChange);
     };
   }, []);
 
