@@ -34,8 +34,9 @@ ZeroPath is a full-stack web application designed to guide users on their journe
 ## Source Code
 
 - Created by:
-  - [Lixiviate](https://github.com/Lixiviate)
+  - [Robert-Ulloa](https://github.com/Robert-Ulloa)
   - [Mountainmancodes](https://github.com/Mountainmancodes)
+  - [Lixiviate](https://github.com/Lixiviate)
 
 ## Technologies Used
 
