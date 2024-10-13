@@ -1,10 +1,23 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Navbar, Nav, Container, Modal } from "react-bootstrap";
 import Auth from "../utils/auth";
 
 const AppNavbar = () => {
+  const [loggedIn, setLoggedIn] = useState(Auth.loggedIn());
   const [showModal, setShowModal] = useState(false);
+
+  useEffect(() => {
+    const handleStorageChange = () => {
+      setLoggedIn(Auth.loggedIn());
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+    };
+  }, []);
 
   return (
     <>
@@ -19,7 +32,7 @@ const AppNavbar = () => {
               <Nav.Link as={Link} to="/">
                 Main
               </Nav.Link>
-              {Auth.loggedIn() ? (
+              {loggedIn ? (
                 <>
                   <Nav.Link as={Link} to="/dashboard">
                     Dashboard
@@ -34,6 +47,7 @@ const AppNavbar = () => {
         </Container>
       </Navbar>
 
+      {/* About modal */}
       <Modal
         size="lg"
         show={showModal}
