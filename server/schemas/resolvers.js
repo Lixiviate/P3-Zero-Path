@@ -1,7 +1,6 @@
 const { AuthenticationError } = require("apollo-server-express");
 const { User } = require("../models");
 const { signToken } = require("../utils/auth");
-const bcrypt = require("bcrypt");
 
 const resolvers = {
   Query: {
@@ -28,8 +27,8 @@ const resolvers = {
         throw new AuthenticationError("Incorrect credentials");
       }
 
-      // Verify the password with bcrypt
-      const correctPw = await bcrypt.compare(password, user.password);
+      // Verify the password using the isCorrectPassword method from user model
+      const correctPw = await user.isCorrectPassword(password);
       if (!correctPw) {
         throw new AuthenticationError("Incorrect credentials");
       }
@@ -90,10 +89,9 @@ const resolvers = {
         user.email = email;
       }
 
-      // Check and update password if provided, re-hash it
+      // Update password if provided (the password will be hashed by the pre-save hook)
       if (password) {
-        const saltRounds = 10;
-        user.password = await bcrypt.hash(password, saltRounds);
+        user.password = password;
       }
 
       // Save the updated user
