@@ -6,6 +6,7 @@ const typeDefs = `
   type Mutation {
     login(login: String!, password: String!): Auth
     addUser(username: String!, email: String!, password: String!): Auth
+    updateUser(username: String, email: String, password: String): UserUpdateResponse
   }
 
   type User {
@@ -16,6 +17,12 @@ const typeDefs = `
 
   type Auth {
     token: ID!
+    user: User
+  }
+
+  type UserUpdateResponse {
+    success: Boolean!
+    message: String
     user: User
   }
 `;

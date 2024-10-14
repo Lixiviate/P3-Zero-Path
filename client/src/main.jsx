@@ -13,6 +13,7 @@ import "./styles/index.css";
 import App from "./App";
 import LandingPage from "./pages/LandingPage/LandingPage";
 import Dashboard from "./pages/Dashboard";
+import Profile from "./pages/Profile";
 
 // Create a link to the GraphQL API
 const httpLink = createHttpLink({
@@ -48,6 +49,10 @@ const router = createBrowserRouter([
       {
         path: "/dashboard",
         element: <Dashboard />,
+      },
+      {
+        path: "/profile",
+        element: <Profile />,
       },
       {
         path: "*",
