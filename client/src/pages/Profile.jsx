@@ -69,69 +69,79 @@ const Profile = () => {
   }
 
   return (
-    <div className="bg-gradient-to-b from-teal-300 to-blue-500 min-h-screen p-8">
-      <h1 className="text-4xl font-bold text-white mb-6">Update Profile</h1>
-
-      {message.text && (
-        <div
-          className={`text-lg mb-4 p-4 rounded ${
-            message.type === "success"
-              ? "bg-green-100 text-green-700"
-              : "bg-red-100 text-red-700"
-          }`}
-        >
-          {message.text}
-        </div>
-      )}
-
-      <form onSubmit={handleSubmit} className="space-y-6">
-        <div>
-          <label htmlFor="username" className="block text-white text-lg mb-2">
-            Username
-          </label>
-          <input
-            type="text"
-            id="username"
-            name="username"
-            className="w-full px-4 py-2 rounded-md"
-            value={formState.username}
-            onChange={handleChange}
-          />
-        </div>
-        <div>
-          <label htmlFor="email" className="block text-white text-lg mb-2">
-            Email
-          </label>
-          <input
-            type="email"
-            id="email"
-            name="email"
-            className="w-full px-4 py-2 rounded-md"
-            value={formState.email}
-            onChange={handleChange}
-          />
-        </div>
-        <div>
-          <label htmlFor="password" className="block text-white text-lg mb-2">
-            New Password
-          </label>
-          <input
-            type="password"
-            id="password"
-            name="password"
-            className="w-full px-4 py-2 rounded-md"
-            value={formState.password}
-            onChange={handleChange}
-            placeholder="Enter new password"
-          />
-        </div>
-        <button
-          type="submit"
-          className="w-full py-3 px-6 rounded-full text-white bg-blue-600 hover:bg-blue-700 transition-all"
-        >
+    <div className="bg-gradient-to-b from-teal-300 to-blue-500 min-h-screen p-8 flex items-center justify-center">
+      <div className="bg-white rounded-lg shadow-lg p-8 w-full max-w-lg">
+        <h1 className="text-4xl font-bold text-gray-800 mb-6 text-center">
           Update Profile
-        </button>
-      </form>
+        </h1>
+
+        {message.text && (
+          <div
+            className={`text-lg mb-4 p-4 rounded ${
+              message.type === "success"
+                ? "bg-green-100 text-green-700"
+                : "bg-red-100 text-red-700"
+            }`}
+          >
+            {message.text}
+          </div>
+        )}
+
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div>
+            <label
+              htmlFor="username"
+              className="block text-gray-700 text-lg mb-2"
+            >
+              Username
+            </label>
+            <input
+              type="text"
+              id="username"
+              name="username"
+              className="w-full px-4 py-2 rounded-md border border-gray-300 focus:ring-2 focus:ring-blue-400"
+              value={formState.username}
+              onChange={handleChange}
+            />
+          </div>
+          <div>
+            <label htmlFor="email" className="block text-gray-700 text-lg mb-2">
+              Email
+            </label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              className="w-full px-4 py-2 rounded-md border border-gray-300 focus:ring-2 focus:ring-blue-400"
+              value={formState.email}
+              onChange={handleChange}
+            />
+          </div>
+          <div>
+            <label
+              htmlFor="password"
+              className="block text-gray-700 text-lg mb-2"
+            >
+              New Password
+            </label>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              className="w-full px-4 py-2 rounded-md border border-gray-300 focus:ring-2 focus:ring-blue-400"
+              value={formState.password}
+              onChange={handleChange}
+              placeholder="Enter new password"
+            />
+          </div>
+          <button
+            type="submit"
+            className="w-full py-3 px-6 rounded-full text-white bg-blue-600 hover:bg-blue-700 transition-all"
+          >
+            Update Profile
+          </button>
+        </form>
+      </div>
     </div>
   );
 };
