@@ -33,15 +33,19 @@ class AuthService {
   }
 
   login(idToken) {
-    // Saves user token to localStorage
     localStorage.setItem("id_token", idToken);
-    window.location.assign("/");
+
+    const loginEvent = new CustomEvent("userLoggedIn");
+    window.dispatchEvent(loginEvent);
+
+    window.location.assign("/dashboard");
   }
 
   logout() {
-    // Clear user token and profile data from localStorage
     localStorage.removeItem("id_token");
-    // this will reload the page and reset the state of the application
+    const logoutEvent = new CustomEvent("userLoggedOut");
+    window.dispatchEvent(logoutEvent);
+
     window.location.assign("/");
   }
 }
