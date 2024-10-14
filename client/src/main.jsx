@@ -1,10 +1,5 @@
 import ReactDOM from "react-dom/client";
-import {
-  ApolloProvider,
-  ApolloClient,
-  InMemoryCache,
-  createHttpLink,
-} from "@apollo/client";
+import { ApolloProvider, ApolloClient, InMemoryCache, createHttpLink } from "@apollo/client";
 import { setContext } from "@apollo/client/link/context";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -15,12 +10,10 @@ import LandingPage from "./pages/LandingPage/LandingPage";
 import Dashboard from "./pages/Dashboard";
 import Profile from "./pages/Profile";
 
-// Create a link to the GraphQL API
 const httpLink = createHttpLink({
   uri: "/graphql",
 });
 
-// Set the auth token in the headers
 const authLink = setContext((_, { headers }) => {
   const token = localStorage.getItem("id_token");
   return {
@@ -31,7 +24,6 @@ const authLink = setContext((_, { headers }) => {
   };
 });
 
-// Initialize Apollo Client
 const client = new ApolloClient({
   link: authLink.concat(httpLink),
   cache: new InMemoryCache(),
@@ -64,6 +56,6 @@ const router = createBrowserRouter([
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <ApolloProvider client={client}>
-    <RouterProvider router={router} />{" "}
+    <RouterProvider router={router} />
   </ApolloProvider>
 );

@@ -4,7 +4,7 @@ import { LOGIN_USER } from "../../utils/mutations";
 import { useNavigate } from "react-router-dom";
 import Auth from "../../utils/auth";
 
-const LoginForm = () => {
+const LoginForm = ({ onSuccess }) => {
   const [formState, setFormState] = useState({ login: "", password: "" });
   const [login, { error }] = useMutation(LOGIN_USER);
   const navigate = useNavigate();
@@ -26,7 +26,11 @@ const LoginForm = () => {
       });
 
       Auth.login(data.login.token);
-      navigate("/dashboard");
+      if (onSuccess) {
+        onSuccess();
+      } else {
+        navigate("/dashboard");
+      }
     } catch (e) {
       console.error(e);
     }

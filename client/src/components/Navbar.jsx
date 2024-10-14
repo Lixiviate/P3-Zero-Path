@@ -1,112 +1,70 @@
-import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
-import { Navbar, Nav, Container, Modal } from "react-bootstrap";
+import React, { useState, useRef, useEffect } from "react";
+import { useNavigate, Link } from "react-router-dom";
 import Auth from "../utils/auth";
+import '../styles/Navbar.css';
 
-const AppNavbar = () => {
+const NavbarComponent = ({ onAuthToggle }) => {
   const [loggedIn, setLoggedIn] = useState(Auth.loggedIn());
-  const [showModal, setShowModal] = useState(false);
+  const [isHovering, setIsHovering] = useState(false);
+  const hoverTimeoutRef = useRef(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    const handleLoginStatusChange = () => {
-      setLoggedIn(Auth.loggedIn());
-    };
-
-    window.addEventListener("userLoggedIn", handleLoginStatusChange);
-    window.addEventListener("userLoggedOut", handleLoginStatusChange);
-
-    return () => {
-      window.removeEventListener("userLoggedIn", handleLoginStatusChange);
-      window.removeEventListener("userLoggedOut", handleLoginStatusChange);
-    };
+    setLoggedIn(Auth.loggedIn());
   }, []);
 
-  return (
-    <>
-      <Navbar bg="dark" variant="dark" expand="lg">
-        <Container fluid>
-          <Navbar.Brand as={Link} to="/">
-            ZeroPath
-          </Navbar.Brand>
-          <Navbar.Toggle aria-controls="navbar" />
-          <Navbar.Collapse id="navbar" className="d-flex flex-row-reverse">
-            <Nav className="ml-auto d-flex">
-              <Nav.Link as={Link} to="/">
-                Home
-              </Nav.Link>
-              {loggedIn ? (
-                <>
-                  <Nav.Link as={Link} to="/dashboard">
-                    Dashboard
-                  </Nav.Link>
-                  <Nav.Link as={Link} to="/profile">
-                    Profile
-                  </Nav.Link>
-                  <Nav.Link onClick={Auth.logout}>Logout</Nav.Link>
-                </>
-              ) : (
-                <Nav.Link onClick={() => setShowModal(true)}>About</Nav.Link>
-              )}
-            </Nav>
-          </Navbar.Collapse>
-        </Container>
-      </Navbar>
+  const handleSignInClick = (e) => {
+    e.stopPropagation();
+    if (!loggedIn) {
+      onAuthToggle();
+    }
+  };
 
-      {/* About modal */}
-      <Modal
-        size="lg"
-        show={showModal}
-        onHide={() => setShowModal(false)}
-        aria-labelledby="about-modal"
-        centered
-        className="backdrop-filter backdrop-blur-lg"
+  const handleSignOutClick = (e) => {
+    e.stopPropagation();
+    Auth.logout();
+    setLoggedIn(false);
+    navigate("/");
+  };
+
+  const handleMouseEnter = () => {
+    if (hoverTimeoutRef.current) {
+      clearTimeout(hoverTimeoutRef.current);
+    }
+    setIsHovering(true);
+  };
+
+  const handleMouseLeave = () => {
+    hoverTimeoutRef.current = setTimeout(() => {
+      setIsHovering(false);
+    }, 300);
+  };
+
+  return (
+    <nav className="navbar">
+      <div 
+        className="fish-container" 
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
       >
-        <Modal.Header
-          closeButton
-          className="bg-gradient-to-r from-teal-300 to-blue-500"
-        >
-          <Modal.Title id="about-modal" className="text-black font-bold">
-            About ZeroPath
-          </Modal.Title>
-        </Modal.Header>
-        <Modal.Body className="bg-gradient-to-b from-teal-300 to-blue-500 p-8 shadow-xl text-black">
-          <h2 className="text-3xl font-bold mb-6">Welcome to ZeroPath</h2>
-          <p className="text-lg mb-4">
-            ZeroPath is designed to guide and empower individuals on their
-            journey to a more sustainable and eco-friendly lifestyle. Whether
-            you're just starting or you're already eco-conscious, ZeroPath is
-            your companion on the journey toward a greener future. Together, we
-            can make a lasting difference.
-          </p>
-          <h3 className="text-2xl font-semibold mb-4">Our Mission</h3>
-          <p className="text-lg mb-4">
-            We believe that everyone can make a difference, no matter how small,
-            in reducing their carbon footprint. ZeroPath helps you track your
-            efforts to minimize your environmental impact through actionable
-            goals and rewarding milestones.
-          </p>
-          <h3 className="text-2xl font-semibold mb-4">Features</h3>
-          <ul className="list-disc list-inside text-lg mb-4">
-            <li>
-              <strong>Personalized Tracking:</strong> Monitor your carbon
-              footprint through various activities, such as energy use,
-              transportation, and more.
-            </li>
-            <li>
-              <strong>Interactive Rewards:</strong> Earn rewards in the form of
-              koi fish, each with unique appearances, to populate your virtual
-              pond as you reduce your environmental impact.
-            </li>
-            <li>
-              <strong>Educational Resources:</strong> Learn about
-              sustainability, green technologies, and lifestyle changes that can
-              help you contribute to a healthier planet.
-            </li>
-          </ul>
-        </Modal.Body>
-      </Modal>
-    </>
+        <span role="img" aria-label="fish" className="fish-icon">🐠</span>
+        {isHovering && (
+          <div className="nav-options">
+            {loggedIn ? (
+              <>
+                <Link to="/tracker" className="nav-option">Tracker</Link>
+                <Link to="/about" className="nav-option">About</Link>
+                <Link to="/goals" className="nav-option">Goals</Link>
+                <button onClick={handleSignOutClick} className="nav-option">Sign Out</button>
+              </>
+            ) : (
+              <button onClick={handleSignInClick} className="nav-option">Sign In</button>
+            )}
+          </div>
+        )}
+      </div>
+    </nav>
   );
 };
 
-export default AppNavbar;
+export default NavbarComponent;

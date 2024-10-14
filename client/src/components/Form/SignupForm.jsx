@@ -4,13 +4,14 @@ import { ADD_USER } from "../../utils/mutations";
 import { useNavigate } from "react-router-dom";
 import Auth from "../../utils/auth";
 
-const SignupForm = () => {
+const SignupForm = ({ onSuccess }) => {
   const [signupFormData, setSignupFormData] = useState({
     username: "",
     email: "",
     password: "",
   });
   const [addUser, { error }] = useMutation(ADD_USER);
+  const [errorMessage, setErrorMessage] = useState("");
   const navigate = useNavigate();
 
   const handleInputChange = (event) => {
@@ -20,6 +21,7 @@ const SignupForm = () => {
 
   const handleFormSubmit = async (event) => {
     event.preventDefault();
+    setErrorMessage("");
 
     try {
       const { data } = await addUser({
@@ -27,9 +29,14 @@ const SignupForm = () => {
       });
 
       Auth.login(data.addUser.token);
-      navigate("/Dashboard");
+      if (onSuccess) {
+        onSuccess();
+      } else {
+        navigate("/dashboard");
+      }
     } catch (err) {
       console.error(err);
+      setErrorMessage(err.message || "An error occurred during signup.");
     }
   };
 
@@ -95,7 +102,7 @@ const SignupForm = () => {
       >
         Sign Up
       </button>
-      {error && <div className="text-red-500 mt-2">Signup failed!</div>}
+      {errorMessage && <div className="text-red-500 mt-2">{errorMessage}</div>}
     </form>
   );
 };
