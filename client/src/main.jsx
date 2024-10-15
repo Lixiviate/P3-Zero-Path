@@ -14,13 +14,12 @@ import App from "./App";
 import LandingPage from "./pages/LandingPage/LandingPage";
 import Dashboard from "./pages/Dashboard";
 import Profile from "./pages/Profile";
+import About from "./pages/About";
 
-// Create a link to the GraphQL API
 const httpLink = createHttpLink({
   uri: "/graphql",
 });
 
-// Set the auth token in the headers
 const authLink = setContext((_, { headers }) => {
   const token = localStorage.getItem("id_token");
   return {
@@ -31,7 +30,6 @@ const authLink = setContext((_, { headers }) => {
   };
 });
 
-// Initialize Apollo Client
 const client = new ApolloClient({
   link: authLink.concat(httpLink),
   cache: new InMemoryCache(),
@@ -55,6 +53,10 @@ const router = createBrowserRouter([
         element: <Profile />,
       },
       {
+        path: "/about",
+        element: <About />,
+      },
+      {
         path: "*",
         element: <h1>Page not found!</h1>,
       },
@@ -64,6 +66,6 @@ const router = createBrowserRouter([
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <ApolloProvider client={client}>
-    <RouterProvider router={router} />{" "}
+    <RouterProvider router={router} />
   </ApolloProvider>
 );

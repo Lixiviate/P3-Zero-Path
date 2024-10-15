@@ -1,0 +1,46 @@
+.navbar {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  z-index: 1000;
+}
+
+.fish-container {
+  position: relative;
+  cursor: pointer;
+}
+
+.fish-icon {
+  font-size: 24px;
+  color: #fff;
+}
+
+.nav-options {
+  position: absolute;
+  right: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  gap: 10px;
+  padding: 5px;
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 5px;
+}
+
+.nav-option {
+  color: white;
+  text-decoration: none;
+  padding: 10px;
+  background-color: rgba(255, 255, 255, 0.3);
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  min-width: 80px;
+  text-align: center;
+  transition: background-color 0.3s ease;
+}
+
+.nav-option:hover {
+  background-color: rgba(255, 255, 255, 0.5);
+}

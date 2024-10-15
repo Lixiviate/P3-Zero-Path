@@ -1,20 +1,26 @@
+import { useState } from "react";
 import Canvas from "../../components/Canvas/Canvas";
+import About from "../About";
 import AuthForm from "../../components/Form/AuthForm";
 import "./LandingPage.css";
 
 const LandingPage = () => {
+  const [showAuth, setShowAuth] = useState(false);
+
+  const toggleAuth = () => {
+    setShowAuth(!showAuth);
+  };
+
   return (
-    <div className="relative min-h-screen flex items-center justify-center bg-gradient-to-b from-teal-300 to-blue-500 overflow-hidden font-serif">
+    <div className="landing-page">
       <Canvas />
-      <div className="relative z-10 text-center">
-        <h1 className="text-6xl font-bold mb-4">
-          <span className="text-white">Zero</span>
-          <span className="text-teal-100">Path</span>
+      <div className="content">
+        <h1 className="title">
+          <span className="title-zero">Zero</span>
+          <span className="title-path">Path</span>
         </h1>
-        <p className="text-2xl mb-8 text-white">
-          A Tranquil Journey to Sustainability
-        </p>
-        <AuthForm /> {/* Renders the new AuthForm with tabs */}
+        <p className="subtitle">A Tranquil Journey to Sustainability</p>
+        {showAuth ? <AuthForm onCancel={toggleAuth} /> : <About />}
       </div>
     </div>
   );
