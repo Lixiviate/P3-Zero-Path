@@ -54,7 +54,7 @@ const router = createBrowserRouter([
       },
       {
         path: "/about",
-        element: <About />,
+        element: <About isStandalone={true} />,
       },
       {
         path: "*",

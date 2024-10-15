@@ -20,7 +20,11 @@ const LandingPage = () => {
           <span className="title-path">Path</span>
         </h1>
         <p className="subtitle">A Tranquil Journey to Sustainability</p>
-        {showAuth ? <AuthForm onCancel={toggleAuth} /> : <About />}
+        {showAuth ? (
+          <AuthForm onCancel={toggleAuth} />
+        ) : (
+          <About isStandalone={false} />
+        )}
       </div>
     </div>
   );
