@@ -1,7 +1,7 @@
-import React, { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import Auth from "../utils/auth";
-import '../styles/Navbar.css';
+import Auth from "../../utils/auth";
+import "../NavBar/Navbar.css";
 
 const NavbarComponent = ({ onAuthToggle }) => {
   const [loggedIn, setLoggedIn] = useState(Auth.loggedIn());
@@ -42,23 +42,41 @@ const NavbarComponent = ({ onAuthToggle }) => {
 
   return (
     <nav className="navbar">
-      <div 
-        className="fish-container" 
+      <div
+        className="fish-container"
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
       >
-        <span role="img" aria-label="fish" className="fish-icon">🐠</span>
+        <span role="img" aria-label="fish" className="fish-icon">
+          🐠
+        </span>
         {isHovering && (
           <div className="nav-options">
             {loggedIn ? (
               <>
-                <Link to="/tracker" className="nav-option">Tracker</Link>
-                <Link to="/about" className="nav-option">About</Link>
-                <Link to="/goals" className="nav-option">Goals</Link>
-                <button onClick={handleSignOutClick} className="nav-option">Sign Out</button>
+                <Link to="/tracker" className="nav-option">
+                  Tracker
+                </Link>
+                <Link to="/goals" className="nav-option">
+                  Goals
+                </Link>
+                <Link to="/dashboard" className="nav-option">
+                  Dashboard
+                </Link>
+                <Link to="/profile" className="nav-option">
+                  Profile
+                </Link>
+                <Link to="/about" className="nav-option">
+                  About
+                </Link>
+                <button onClick={handleSignOutClick} className="nav-option">
+                  Sign Out
+                </button>
               </>
             ) : (
-              <button onClick={handleSignInClick} className="nav-option">Sign In</button>
+              <button onClick={handleSignInClick} className="nav-option">
+                Sign In
+              </button>
             )}
           </div>
         )}
