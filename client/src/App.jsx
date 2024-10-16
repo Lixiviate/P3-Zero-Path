@@ -25,25 +25,16 @@ function App() {
   };
 
   return (
-    <div className="relative min-h-screen">
-      {/* Background gradient */}
-      <div className="fixed inset-0 bg-gradient-to-b from-teal-300 to-blue-500" style={{ zIndex: 0 }}></div>
-      
-      {/* Canvas for bubbles */}
-      <Canvas />
-      
-    
-      <div className="relative z-10 min-h-screen">
-        <Navbar onAuthToggle={toggleAuth} />
-        <div className="pt-20">
-          {showAuth && (
-            <div className="fixed inset-0 flex items-center justify-center z-40 bg-black bg-opacity-50">
-              <AuthForm onCancel={handleAuthCancel} />
-            </div>
-          )}
-          <Outlet context={{ showAuth, toggleAuth }} />
+    <div className="App">
+      <Canvas enableRipples={location.pathname === "/"} />{" "}
+      {/* Enable ripples only on the main page */}
+      <Navbar onAuthToggle={toggleAuth} />
+      {showAuth && (
+        <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
+          <AuthForm onCancel={handleAuthCancel} />
         </div>
-      </div>
+      )}
+      <Outlet context={{ showAuth, toggleAuth }} />
     </div>
   );
 }
