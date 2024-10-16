@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import Auth from "../../utils/auth";
 import PropTypes from 'prop-types';
-import "./Navbar.css";
+import "../../styles/Navbar.css";
 
 const NavbarComponent = ({ onAuthToggle }) => {
   const [loggedIn, setLoggedIn] = useState(Auth.loggedIn());
