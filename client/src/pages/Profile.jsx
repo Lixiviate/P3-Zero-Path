@@ -1,3 +1,4 @@
+import Canvas from "../components/Canvas/Canvas";
 import { useQuery, useMutation } from "@apollo/client";
 import { useState, useEffect } from "react";
 import { GET_ME } from "../utils/queries";
@@ -74,8 +75,9 @@ const Profile = () => {
   if (loading) return <div>Loading...</div>;
 
   return (
-    <div className="bg-gradient-to-b from-teal-300 to-blue-500 min-h-screen flex items-center justify-center p-8">
-      <div className="bg-white rounded-lg shadow-lg p-8 w-full max-w-lg">
+    <div className="bg-gradient-to-b from-teal-300 to-blue-500 min-h-screen flex items-center justify-center p-8 relative">
+      <Canvas enableRipples={false} />
+      <div className="relative z-10 bg-white rounded-lg shadow-lg p-8 w-full max-w-lg">
         <h1 className="text-4xl font-bold text-gray-800 mb-6 text-center">
           Update Profile
         </h1>
