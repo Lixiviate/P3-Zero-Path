@@ -1,11 +1,7 @@
-import Canvas from "../components/Canvas/Canvas";
-
 const Dashboard = () => {
   return (
-    <div className="bg-gradient-to-b from-teal-300 to-blue-500 min-h-screen flex p-8 relative">
-      {/* Canvas for bubbles animation */}
-      <Canvas enableRipples={false} />
-      <div className="relative z-10 container mx-auto px-4 py-8 mt-16">
+    <div className="bg-gradient-to-b from-teal-300 to-blue-500 min-h-screen flex p-8">
+      <div className="z-10 container mx-auto px-4 py-8 mt-16">
         <header className="text-center mb-12">
           <h1 className="text-4xl font-bold text-white mb-4">Welcome Back!</h1>
           <p className="text-xl text-teal-100">

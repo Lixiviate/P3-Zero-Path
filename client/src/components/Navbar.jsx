@@ -1,8 +1,8 @@
 import { useState, useRef, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import Auth from "../../utils/auth";
-import PropTypes from 'prop-types';
-import "../../styles/Navbar.css";
+import Auth from "../utils/auth";
+import PropTypes from "prop-types";
+import "../../src/styles/NavBar.css";
 
 const NavbarComponent = ({ onAuthToggle }) => {
   const [loggedIn, setLoggedIn] = useState(Auth.loggedIn());
@@ -55,15 +55,29 @@ const NavbarComponent = ({ onAuthToggle }) => {
           <div className="nav-options">
             {loggedIn ? (
               <>
-                <Link to="/tracker" className="nav-option">Tracker</Link>
-                <Link to="/goals" className="nav-option">Goals</Link>
-                <Link to="/dashboard" className="nav-option">Dashboard</Link>
-                <Link to="/profile" className="nav-option">Profile</Link>
-                <Link to="/about" className="nav-option">About</Link>
-                <button onClick={handleSignOutClick} className="nav-option">Sign Out</button>
+                <Link to="/tracker" className="nav-option">
+                  Tracker
+                </Link>
+                <Link to="/goals" className="nav-option">
+                  Goals
+                </Link>
+                <Link to="/dashboard" className="nav-option">
+                  Dashboard
+                </Link>
+                <Link to="/profile" className="nav-option">
+                  Profile
+                </Link>
+                <Link to="/about" className="nav-option">
+                  About
+                </Link>
+                <button onClick={handleSignOutClick} className="nav-option">
+                  Sign Out
+                </button>
               </>
             ) : (
-              <button onClick={handleSignInClick} className="nav-option">Sign In</button>
+              <button onClick={handleSignInClick} className="nav-option">
+                Sign In
+              </button>
             )}
           </div>
         )}
