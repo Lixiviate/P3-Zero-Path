@@ -7,6 +7,7 @@ const userSchema = new Schema(
       type: String,
       required: true,
       unique: true,
+      trim: true
     },
     email: {
       type: String,
@@ -17,7 +18,22 @@ const userSchema = new Schema(
     password: {
       type: String,
       required: true,
+      minlength: 5
     },
+    profileImageUrl: {
+      type: String,
+      default: '',
+    },
+    goals: {
+      type: [String],
+      default: [],
+    },
+    carbonData: {
+      carbon_kg: {
+        type: Number,
+        default: 0
+      }
+    }
   },
   {
     toJSON: {
@@ -26,16 +42,16 @@ const userSchema = new Schema(
   }
 );
 
-// Hash user password before saving
+
 userSchema.pre("save", async function (next) {
-  if (this.isModified("password") || this.isNew) {
+  if (this.isNew || this.isModified("password")) {
     const saltRounds = 10;
     this.password = await bcrypt.hash(this.password, saltRounds);
   }
   next();
 });
 
-// Add a method to check if password is correct
+
 userSchema.methods.isCorrectPassword = async function (password) {
   return bcrypt.compare(password, this.password);
 };

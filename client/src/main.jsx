@@ -15,6 +15,7 @@ import LandingPage from "./pages/LandingPage/LandingPage";
 import Dashboard from "./pages/Dashboard";
 import Profile from "./pages/Profile";
 import About from "./pages/About";
+import Goals from "./pages/Goals";
 
 const httpLink = createHttpLink({
   uri: "/graphql",
@@ -55,6 +56,10 @@ const router = createBrowserRouter([
       {
         path: "/about",
         element: <About isStandalone={true} />,
+      },
+      {
+        path: "/goals",
+        element: <Goals />,
       },
       {
         path: "*",

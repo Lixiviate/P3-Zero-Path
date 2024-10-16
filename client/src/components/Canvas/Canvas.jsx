@@ -6,8 +6,8 @@ const Canvas = () => {
   return (
     <canvas
       ref={canvasRef}
-      className="absolute inset-0 w-full h-full z-0"
-      style={{ zIndex: 0 }}
+      className="fixed inset-0 w-full h-full"
+      style={{ zIndex: 1 }} 
     />
   );
 };
