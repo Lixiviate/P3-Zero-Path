@@ -48,16 +48,19 @@ const Profile = () => {
     event.preventDefault();
     try {
       const { data } = await updateUser({
-        variables: { 
-          ...formState, 
-          profileImage: profileImage && profileImage.startsWith('data:') ? profileImage : undefined
+        variables: {
+          ...formState,
+          profileImage:
+            profileImage && profileImage.startsWith("data:")
+              ? profileImage
+              : undefined,
         },
       });
-  
+
       if (data.updateUser.token) {
         Auth.login(data.updateUser.token);
       }
-  
+
       setMessage({ text: "Profile updated successfully!", type: "success" });
       refetch();
     } catch (err) {
@@ -71,14 +74,20 @@ const Profile = () => {
   if (loading) return <div>Loading...</div>;
 
   return (
-    <div className="bg-gradient-to-b from-teal-300 to-blue-500 min-h-screen p-8 flex items-center justify-center">
+    <div className="bg-gradient-to-b from-teal-300 to-blue-500 min-h-screen flex items-center justify-center p-8">
       <div className="bg-white rounded-lg shadow-lg p-8 w-full max-w-lg">
-        <h1 className="text-4xl font-bold text-gray-800 mb-6 text-center">Update Profile</h1>
+        <h1 className="text-4xl font-bold text-gray-800 mb-6 text-center">
+          Update Profile
+        </h1>
 
         {message.text && (
-          <div className={`text-lg mb-4 p-4 rounded ${
-            message.type === "success" ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"
-          }`}>
+          <div
+            className={`text-lg mb-4 p-4 rounded ${
+              message.type === "success"
+                ? "bg-green-100 text-green-700"
+                : "bg-red-100 text-red-700"
+            }`}
+          >
             {message.text}
           </div>
         )}
@@ -112,7 +121,12 @@ const Profile = () => {
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label htmlFor="username" className="block text-gray-700 text-lg mb-2">Username</label>
+            <label
+              htmlFor="username"
+              className="block text-gray-700 text-lg mb-2"
+            >
+              Username
+            </label>
             <input
               type="text"
               id="username"
@@ -123,7 +137,9 @@ const Profile = () => {
             />
           </div>
           <div>
-            <label htmlFor="email" className="block text-gray-700 text-lg mb-2">Email</label>
+            <label htmlFor="email" className="block text-gray-700 text-lg mb-2">
+              Email
+            </label>
             <input
               type="email"
               id="email"
@@ -134,7 +150,12 @@ const Profile = () => {
             />
           </div>
           <div>
-            <label htmlFor="password" className="block text-gray-700 text-lg mb-2">New Password</label>
+            <label
+              htmlFor="password"
+              className="block text-gray-700 text-lg mb-2"
+            >
+              New Password
+            </label>
             <input
               type="password"
               id="password"
