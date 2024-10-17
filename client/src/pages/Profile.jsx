@@ -5,8 +5,10 @@ import { UPDATE_USER } from "../utils/mutations";
 import Auth from "../utils/auth";
 
 const Profile = () => {
-  const { loading, data, refetch } = useQuery(GET_ME);
+  const { loading, data } = useQuery(GET_ME);
   const [updateUser] = useMutation(UPDATE_USER);
+
+  const userData = data?.me || {};
 
   const [formState, setFormState] = useState({
     username: "",
@@ -14,67 +16,60 @@ const Profile = () => {
     password: "",
   });
 
-  const [profileImage, setProfileImage] = useState(null);
   const [message, setMessage] = useState({ text: "", type: "" });
 
   useEffect(() => {
-    if (data?.me) {
+    if (!loading && userData) {
       setFormState({
-        username: data.me.username || "",
-        email: data.me.email || "",
+        username: userData.username || "",
+        email: userData.email || "",
         password: "",
       });
-      setProfileImage(data.me.profileImageUrl || null);
     }
-  }, [data]);
+  }, [loading, userData]);
 
   const handleChange = (event) => {
     const { name, value } = event.target;
-    setFormState({ ...formState, [name]: value });
-  };
-
-  const handleImageChange = (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setProfileImage(reader.result);
-      };
-      reader.readAsDataURL(file);
-    }
+    setFormState({
+      ...formState,
+      [name]: value,
+    });
   };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+
     try {
       const { data } = await updateUser({
-        variables: {
-          ...formState,
-          profileImage:
-            profileImage && profileImage.startsWith("data:")
-              ? profileImage
-              : undefined,
-        },
+        variables: { ...formState },
       });
 
+      // Log the user in with the new token to refresh the session
       if (data.updateUser.token) {
-        Auth.login(data.updateUser.token);
+        Auth.login(data.updateUser.token); // Refresh the token after profile update
       }
 
       setMessage({ text: "Profile updated successfully!", type: "success" });
-      refetch();
     } catch (err) {
-      setMessage({
-        text: err.message || "An error occurred while updating your profile.",
-        type: "error",
-      });
+      if (err.message.includes("Username already in use")) {
+        setMessage({ text: "Username already in use", type: "error" });
+      } else if (err.message.includes("Email already in use")) {
+        setMessage({ text: "Email already in use", type: "error" });
+      } else {
+        setMessage({
+          text: "An error occurred while updating your profile.",
+          type: "error",
+        });
+      }
     }
   };
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
   return (
-    <div className="bg-gradient-to-b from-teal-300 to-blue-500 min-h-screen flex items-center justify-center p-8">
+    <div className="bg-gradient-to-b from-teal-300 to-blue-500 min-h-screen p-8 flex items-center justify-center">
       <div className="z-10 bg-white rounded-lg shadow-lg p-8 w-full max-w-lg">
         <h1 className="text-4xl font-bold text-gray-800 mb-6 text-center">
           Update Profile
@@ -91,33 +86,6 @@ const Profile = () => {
             {message.text}
           </div>
         )}
-
-        <div className="mb-6 flex flex-col items-center">
-          <div className="w-32 h-32 rounded-full overflow-hidden mb-4 bg-gray-200 flex items-center justify-center">
-            {profileImage ? (
-              <img
-                src={profileImage}
-                alt="Profile"
-                className="w-full h-full object-cover"
-              />
-            ) : (
-              <span className="text-gray-500 text-4xl">👤</span>
-            )}
-          </div>
-          <input
-            type="file"
-            accept="image/*"
-            onChange={handleImageChange}
-            className="hidden"
-            id="profile-upload"
-          />
-          <label
-            htmlFor="profile-upload"
-            className="cursor-pointer bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
-          >
-            Upload Profile Picture
-          </label>
-        </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
