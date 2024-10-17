@@ -1,4 +1,3 @@
-// Make a request to the Carbon Interface API
 
 //calculate Electricity emissions
 export const calculateElectricityEmissions = async (electricityValue, unit = "kwh", country = "us", state = "") => {
@@ -6,7 +5,7 @@ export const calculateElectricityEmissions = async (electricityValue, unit = "kw
     const response = await fetch("https://www.carboninterface.com/api/v1/estimates", {
       method: "POST",
       headers: {
-        Authorization: `Bearer ${import.meta.env.VITE_CARBON_INTERFACE_API_KEY}`, // Use API key from .env
+        Authorization: `Bearer ${import.meta.env.VITE_CARBON_INTERFACE_API_KEY}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify({

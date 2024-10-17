@@ -1,4 +1,5 @@
 import useCanvas from "../../hooks/useCanvas";
+import PropTypes from 'prop-types';
 
 const Canvas = ({ enableRipples = true }) => {
   const canvasRef = useCanvas(enableRipples);
@@ -10,6 +11,10 @@ const Canvas = ({ enableRipples = true }) => {
       style={{ zIndex: 0 }}
     />
   );
+};
+
+Canvas.propTypes = {
+  enableRipples: PropTypes.bool
 };
 
 export default Canvas;
