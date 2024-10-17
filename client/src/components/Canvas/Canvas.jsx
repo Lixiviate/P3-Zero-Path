@@ -1,12 +1,12 @@
 import useCanvas from "../../hooks/useCanvas";
 
-const Canvas = () => {
-  const canvasRef = useCanvas(); // Custom hook managing canvas animations
+const Canvas = ({ enableRipples = true }) => {
+  const canvasRef = useCanvas(enableRipples);
 
   return (
     <canvas
       ref={canvasRef}
-      className="absolute inset-0 w-full h-full z-0"
+      className="absolute inset-0 w-full h-full"
       style={{ zIndex: 0 }}
     />
   );

@@ -1,8 +1,8 @@
 import { useState } from "react";
-import Canvas from "../../components/Canvas/Canvas";
-import About from "../About";
-import AuthForm from "../../components/Form/AuthForm";
-import "./LandingPage.css";
+import Canvas from "../components/Canvas/Canvas";
+import About from "./About";
+import AuthForm from "../components/Form/AuthForm";
+import "../styles/LandingPage.css";
 
 const LandingPage = () => {
   const [showAuth, setShowAuth] = useState(false);
