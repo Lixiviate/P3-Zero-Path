@@ -1,10 +1,10 @@
 import { useEffect, useRef, useCallback } from "react";
 import { animate, createRipple } from "../utils/animations";
 
-const useCanvas = () => {
+const useCanvas = (enableRipples = false) => {
   const canvasRef = useRef(null);
-  const ripplesRef = useRef([]); // Keep track of ripple effects
-  const bubblesRef = useRef([]); // Keep track of bubble animations
+  const ripplesRef = useRef([]);
+  const bubblesRef = useRef([]);
 
   const handleClick = useCallback((event) => {
     const rect = canvasRef.current.getBoundingClientRect();
@@ -24,20 +24,26 @@ const useCanvas = () => {
 
     const animateWrapper = () => {
       animationId = requestAnimationFrame(animateWrapper);
-      animate(canvasRef, ripplesRef, bubblesRef); // Handle both ripple and bubble animations
+      animate(canvasRef, ripplesRef, bubblesRef);
     };
 
     resizeCanvas();
     window.addEventListener("resize", resizeCanvas);
-    canvas.addEventListener("click", handleClick);
+
+    if (enableRipples) {
+      canvas.addEventListener("click", handleClick);
+    }
+
     animateWrapper();
 
     return () => {
       cancelAnimationFrame(animationId);
       window.removeEventListener("resize", resizeCanvas);
-      canvas.removeEventListener("click", handleClick);
+      if (enableRipples) {
+        canvas.removeEventListener("click", handleClick);
+      }
     };
-  }, [handleClick]);
+  }, [handleClick, enableRipples]);
 
   return canvasRef;
 };

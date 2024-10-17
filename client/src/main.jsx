@@ -11,10 +11,11 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "./styles/index.css";
 
 import App from "./App";
-import LandingPage from "./pages/LandingPage/LandingPage";
+import LandingPage from "./pages/LandingPage";
 import Dashboard from "./pages/Dashboard";
 import Profile from "./pages/Profile";
 import About from "./pages/About";
+import Goals from "./pages/Goals";
 
 const httpLink = createHttpLink({
   uri: "/graphql",
@@ -55,6 +56,10 @@ const router = createBrowserRouter([
       {
         path: "/about",
         element: <About isStandalone={true} />,
+      },
+      {
+        path: "/goals",
+        element: <Goals />,
       },
       {
         path: "*",

@@ -1,8 +1,8 @@
 import { useQuery, useMutation } from "@apollo/client";
 import { useState, useEffect } from "react";
-import { GET_ME } from "../../src/utils/queries";
-import { UPDATE_USER } from "../../src/utils/mutations";
-import Auth from "../../src/utils/auth";
+import { GET_ME } from "../utils/queries";
+import { UPDATE_USER } from "../utils/mutations";
+import Auth from "../utils/auth";
 
 const Profile = () => {
   const { loading, data } = useQuery(GET_ME);
@@ -70,7 +70,7 @@ const Profile = () => {
 
   return (
     <div className="bg-gradient-to-b from-teal-300 to-blue-500 min-h-screen p-8 flex items-center justify-center">
-      <div className="bg-white rounded-lg shadow-lg p-8 w-full max-w-lg">
+      <div className="z-10 bg-white rounded-lg shadow-lg p-8 w-full max-w-lg">
         <h1 className="text-4xl font-bold text-gray-800 mb-6 text-center">
           Update Profile
         </h1>
