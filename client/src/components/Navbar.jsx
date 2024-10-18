@@ -55,7 +55,7 @@ const NavbarComponent = ({ onAuthToggle }) => {
   const handleMouseLeave = () => {
     hoverTimeoutRef.current = setTimeout(() => {
       setIsHovering(false);
-    }, 300);
+    }, 1000);
   };
 
   return (
