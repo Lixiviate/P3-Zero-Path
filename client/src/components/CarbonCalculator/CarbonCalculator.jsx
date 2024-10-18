@@ -191,10 +191,16 @@ const CarbonCalculator = () => {
         </div>
       )}
 
-      {result && result.carbon_kg && (
+     
+      {result && (
         <div className="result">
           <h3>Result:</h3>
-          <p>Total Emissions: {Math.round(result.carbon_kg)} kg CO2</p> {/* Rounded result */}
+          {result.carbon_kg && (
+            <p>Total Emissions: {Math.round(result.carbon_kg)} kg CO2</p> // Vehicle or general case
+          )}
+          {result.carbon_g && (
+            <p>Total Emissions: {Math.round(result.carbon_g / 1000)} kg CO2</p> // Shipping might return grams
+          )}
         </div>
       )}
 
