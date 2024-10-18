@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Auth from "../utils/auth";
 import PropTypes from "prop-types";
 import "../../src/styles/NavBar.css";
@@ -41,6 +41,12 @@ const NavbarComponent = ({ onAuthToggle }) => {
     }, 300);
   };
 
+  const handleNavClick = (path) => (e) => {
+    e.stopPropagation();
+    navigate(path);
+    setIsHovering(false);
+  };
+
   return (
     <nav className="navbar fixed top-0 right-0 z-50 p-4">
       <div
@@ -55,21 +61,21 @@ const NavbarComponent = ({ onAuthToggle }) => {
           <div className="nav-options">
             {loggedIn ? (
               <>
-                <Link to="/tracker" className="nav-option">
+                <button onClick={handleNavClick("/tracker")} className="nav-option">
                   Tracker
-                </Link>
-                <Link to="/goals" className="nav-option">
+                </button>
+                <button onClick={handleNavClick("/goals")} className="nav-option">
                   Goals
-                </Link>
-                <Link to="/dashboard" className="nav-option">
+                </button>
+                <button onClick={handleNavClick("/dashboard")} className="nav-option">
                   Dashboard
-                </Link>
-                <Link to="/profile" className="nav-option">
+                </button>
+                <button onClick={handleNavClick("/profile")} className="nav-option">
                   Profile
-                </Link>
-                <Link to="/about" className="nav-option">
+                </button>
+                <button onClick={handleNavClick("/about")} className="nav-option">
                   About
-                </Link>
+                </button>
                 <button onClick={handleSignOutClick} className="nav-option">
                   Sign Out
                 </button>
