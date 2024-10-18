@@ -1,22 +1,22 @@
-import React, { useState } from 'react';
-import { useMutation } from '@apollo/client';
-import { UPDATE_USER } from '../../utils/mutations';
+import { useState } from "react";
+import { useMutation } from "@apollo/client";
+import { UPDATE_USER } from "../../utils/mutations";
 import {
   calculateFlightEmissions,
   calculateVehicleEmissions,
   calculateShippingEmissions,
-} from '../../utils/api/emissions';
-import './../../styles/CarbonCalculator.css';
+} from "../../utils/api/emissions";
+import "./../../styles/CarbonCalculator.css";
 
 //  standard emissions factors for vehicle types
 const vehicleEmissionFactors = {
-  suv: 0.328,  // Example value: kg CO2 per mile
-  truck: 0.503,  // Example value: kg CO2 per mile
-  car: 0.4,   // Example value: kg CO2 per mile
+  suv: 0.328, // Example value: kg CO2 per mile
+  truck: 0.503, // Example value: kg CO2 per mile
+  car: 0.4, // Example value: kg CO2 per mile
 };
 
 const CarbonCalculator = () => {
-  const [calculationType, setCalculationType] = useState('electricity');
+  const [calculationType, setCalculationType] = useState("electricity");
   const [result, setResult] = useState(null);
   const [formData, setFormData] = useState({});
   const [error, setError] = useState(null);
@@ -39,31 +39,31 @@ const CarbonCalculator = () => {
 
     try {
       switch (calculationType) {
-        case 'flight':
+        case "flight":
           response = await calculateFlightEmissions(
             formData.passengers,
             formData.departure,
             formData.destination
           );
           break;
-        case 'vehicle': {
+        case "vehicle": {
           const emissionFactor = vehicleEmissionFactors[formData.vehicleType];
-          if (!emissionFactor) throw new Error('Invalid vehicle type');
-          const emissions = formData.distance * emissionFactor;  // Calculate emissions based on distance and emission factor
-          response = { data: { attributes: { carbon_kg: emissions } } };  // Mock response based on the calculated emissions
+          if (!emissionFactor) throw new Error("Invalid vehicle type");
+          const emissions = formData.distance * emissionFactor; // Calculate emissions based on distance and emission factor
+          response = { data: { attributes: { carbon_kg: emissions } } }; // Mock response based on the calculated emissions
           break;
         }
-        case 'shipping':
+        case "shipping":
           response = await calculateShippingEmissions(
             formData.weight,
-            'lb', // Default to pounds
+            "lb", // Default to pounds
             formData.distance,
-            'mi', // Default to miles
+            "mi", // Default to miles
             formData.transportMethod
           );
           break;
         default:
-          throw new Error('Invalid calculation type');
+          throw new Error("Invalid calculation type");
       }
 
       if (response && response.data) {
@@ -71,17 +71,17 @@ const CarbonCalculator = () => {
         // Save carbon data
         try {
           await updateUser({
-            variables: { 
+            variables: {
               carbonData: {
-                carbon_kg: response.data.attributes.carbon_kg
-              }
+                carbon_kg: response.data.attributes.carbon_kg,
+              },
             },
           });
         } catch (err) {
           console.error("Error updating carbon data:", err);
         }
       } else {
-        throw new Error('No data received from the API');
+        throw new Error("No data received from the API");
       }
     } catch (err) {
       console.error("Error calculating emissions:", err);
@@ -105,15 +105,33 @@ const CarbonCalculator = () => {
           <option value="shipping">Shipping</option>
         </select>
 
-        {calculationType === 'flight' && (
+        {calculationType === "flight" && (
           <>
-            <input type="number" name="passengers" placeholder="Number of Passengers" onChange={handleInputChange} required />
-            <input type="text" name="departure" placeholder="Departure Airport Code" onChange={handleInputChange} required />
-            <input type="text" name="destination" placeholder="Destination Airport Code" onChange={handleInputChange} required />
+            <input
+              type="number"
+              name="passengers"
+              placeholder="Number of Passengers"
+              onChange={handleInputChange}
+              required
+            />
+            <input
+              type="text"
+              name="departure"
+              placeholder="Departure Airport Code"
+              onChange={handleInputChange}
+              required
+            />
+            <input
+              type="text"
+              name="destination"
+              placeholder="Destination Airport Code"
+              onChange={handleInputChange}
+              required
+            />
           </>
         )}
 
-        {calculationType === 'vehicle' && (
+        {calculationType === "vehicle" && (
           <>
             {/* Predefined vehicle type dropdown */}
             <select name="vehicleType" onChange={handleInputChange} required>
@@ -123,11 +141,17 @@ const CarbonCalculator = () => {
               <option value="car">Car</option>
             </select>
 
-            <input type="number" name="distance" placeholder="Distance (miles)" onChange={handleInputChange} required />
+            <input
+              type="number"
+              name="distance"
+              placeholder="Distance (miles)"
+              onChange={handleInputChange}
+              required
+            />
           </>
         )}
 
-        {calculationType === 'shipping' && (
+        {calculationType === "shipping" && (
           <>
             <input
               type="number"
@@ -158,7 +182,7 @@ const CarbonCalculator = () => {
         )}
 
         <button type="submit" className="submit-btn" disabled={isLoading}>
-          {isLoading ? 'Calculating...' : 'Calculate'}
+          {isLoading ? "Calculating..." : "Calculate"}
         </button>
       </form>
 
@@ -168,7 +192,6 @@ const CarbonCalculator = () => {
         </div>
       )}
 
-     
       {result && (
         <div className="result">
           <h3>Result:</h3>
@@ -180,7 +203,6 @@ const CarbonCalculator = () => {
           )}
         </div>
       )}
-
     </div>
   );
 };
