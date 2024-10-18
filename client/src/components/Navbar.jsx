@@ -2,7 +2,9 @@ import { useState, useRef, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import Auth from "../utils/auth";
 import PropTypes from "prop-types";
-import "../../src/styles/NavBar.css";
+import "../styles/Navbar.css";
+import { useQuery } from "@apollo/client";
+import { GET_ME } from "../utils/queries";
 
 const NavbarComponent = ({ onAuthToggle }) => {
   const [loggedIn, setLoggedIn] = useState(Auth.loggedIn());
@@ -10,8 +12,23 @@ const NavbarComponent = ({ onAuthToggle }) => {
   const hoverTimeoutRef = useRef(null);
   const navigate = useNavigate();
 
+  const { loading, data } = useQuery(GET_ME, {
+    skip: !loggedIn,
+  });
+  const userData = data?.me || {};
+
   useEffect(() => {
-    setLoggedIn(Auth.loggedIn());
+    const handleUserStatusChange = () => {
+      setLoggedIn(Auth.loggedIn());
+    };
+
+    window.addEventListener("userLoggedIn", handleUserStatusChange);
+    window.addEventListener("userLoggedOut", handleUserStatusChange);
+
+    return () => {
+      window.removeEventListener("userLoggedIn", handleUserStatusChange);
+      window.removeEventListener("userLoggedOut", handleUserStatusChange);
+    };
   }, []);
 
   const handleSignInClick = (e) => {
@@ -42,7 +59,30 @@ const NavbarComponent = ({ onAuthToggle }) => {
   };
 
   return (
-    <nav className="navbar fixed top-0 right-0 z-50 p-4">
+    <nav className="navbar fixed top-0 left-0 z-50 p-4 flex items-center">
+      {/* Profile Icon Section */}
+      {loggedIn && (
+        <div className="flex items-center">
+          <Link to="/profile">
+            {userData.profilePhoto ? (
+              <img
+                src={userData.profilePhoto}
+                alt="Profile"
+                className="h-10 w-10 rounded-full object-cover"
+              />
+            ) : (
+              <div className="h-10 w-10 rounded-full bg-gray-300 flex items-center justify-center">
+                <span className="text-gray-600 text-xl">👤</span>
+              </div>
+            )}
+          </Link>
+        </div>
+      )}
+
+      {/* Spacer to push fish icon to the right */}
+      <div className="flex-grow"></div>
+
+      {/* Fish Icon and Navigation Options */}
       <div
         className="fish-container"
         onMouseEnter={handleMouseEnter}
@@ -63,9 +103,6 @@ const NavbarComponent = ({ onAuthToggle }) => {
                 </Link>
                 <Link to="/dashboard" className="nav-option">
                   Dashboard
-                </Link>
-                <Link to="/profile" className="nav-option">
-                  Profile
                 </Link>
                 <Link to="/about" className="nav-option">
                   About
