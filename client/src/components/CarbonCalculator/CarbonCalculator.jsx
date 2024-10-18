@@ -9,7 +9,7 @@ import {
   getVehicleMakes,
   getVehicleModels
 } from '../../utils/api/emissions';
-import './CarbonCalculator.css';
+import './../../styles/CarbonCalculator.css';
 
 const CarbonCalculator = () => {
   const [calculationType, setCalculationType] = useState('electricity');
