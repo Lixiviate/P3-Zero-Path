@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useMutation } from '@apollo/client';
 import { UPDATE_USER } from '../../utils/mutations';
 import {
@@ -6,58 +6,31 @@ import {
   calculateFlightEmissions,
   calculateVehicleEmissions,
   calculateShippingEmissions,
-  getVehicleMakes,
-  getVehicleModels
 } from '../../utils/api/emissions';
 import './../../styles/CarbonCalculator.css';
+
+//  standard emissions factors for vehicle types
+const vehicleEmissionFactors = {
+  suv: 0.328,  // Example value: kg CO2 per mile
+  truck: 0.503,  // Example value: kg CO2 per mile
+  car: 0.4,   // Example value: kg CO2 per mile
+};
 
 const CarbonCalculator = () => {
   const [calculationType, setCalculationType] = useState('electricity');
   const [result, setResult] = useState(null);
   const [formData, setFormData] = useState({});
   const [error, setError] = useState(null);
-  const [vehicleMakes, setVehicleMakes] = useState([]);
-  const [vehicleModels, setVehicleModels] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
   const [updateUser] = useMutation(UPDATE_USER);
 
-  useEffect(() => {
-    if (calculationType === 'vehicle') {
-      setIsLoading(true);
-      getVehicleMakes()
-        .then(data => {
-          setVehicleMakes(data.data || []);
-          setIsLoading(false);
-        })
-        .catch(err => {
-          console.error("Error fetching vehicle makes:", err);
-          setError("Failed to load vehicle makes");
-          setIsLoading(false);
-        });
-    }
-  }, [calculationType]);
-
-  useEffect(() => {
-    if (formData.vehicleMake) {
-      setIsLoading(true);
-      getVehicleModels(formData.vehicleMake)
-        .then(data => {
-          setVehicleModels(data.data || []);
-          setIsLoading(false);
-        })
-        .catch(err => {
-          console.error("Error fetching vehicle models:", err);
-          setError("Failed to load vehicle models");
-          setIsLoading(false);
-        });
-    }
-  }, [formData.vehicleMake]);
-
+  // Handle form data changes
   const handleInputChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError(null);
@@ -83,15 +56,10 @@ const CarbonCalculator = () => {
           );
           break;
         case 'vehicle': {
-          const selectedModel = vehicleModels.find(model => 
-            model.data.attributes.name === formData.vehicleModel &&
-            model.data.attributes.year === parseInt(formData.vehicleYear)
-          );
-          if (!selectedModel) throw new Error('Invalid vehicle selection');
-          response = await calculateVehicleEmissions(
-            formData.distance,
-            selectedModel.data.id
-          );
+          const emissionFactor = vehicleEmissionFactors[formData.vehicleType];
+          if (!emissionFactor) throw new Error('Invalid vehicle type');
+          const emissions = formData.distance * emissionFactor;  // Calculate emissions based on distance and emission factor
+          response = { data: { attributes: { carbon_kg: emissions } } };  // Mock response based on the calculated emissions
           break;
         }
         case 'shipping':
@@ -100,7 +68,7 @@ const CarbonCalculator = () => {
             'lb', // Default to pounds
             formData.distance,
             'mi', // Default to miles
-            formData.transportMethod // Selected transport method from the dropdown
+            formData.transportMethod
           );
           break;
         default:
@@ -109,8 +77,7 @@ const CarbonCalculator = () => {
 
       if (response && response.data) {
         setResult(response.data.attributes);
-        
-        // Save the carbon data
+        // Save carbon data
         try {
           await updateUser({
             variables: { 
@@ -164,41 +131,21 @@ const CarbonCalculator = () => {
         {calculationType === 'flight' && (
           <>
             <input type="number" name="passengers" placeholder="Number of Passengers" onChange={handleInputChange} required />
-            <input type="text" name="departure" placeholder="Departure Airport Code (e.g., SAT)" onChange={handleInputChange} required />
-            <input type="text" name="destination" placeholder="Destination Airport Code (e.g., DEN)" onChange={handleInputChange} required />
+            <input type="text" name="departure" placeholder="Departure Airport Code" onChange={handleInputChange} required />
+            <input type="text" name="destination" placeholder="Destination Airport Code" onChange={handleInputChange} required />
           </>
         )}
 
         {calculationType === 'vehicle' && (
           <>
-            <select name="vehicleMake" onChange={handleInputChange} required>
-              <option value="">Select Make</option>
-              {vehicleMakes && vehicleMakes.map(make => (
-                <option key={make.data.id} value={make.data.id}>{make.data.attributes.name}</option>
-              ))}
+            {/* Predefined vehicle type dropdown */}
+            <select name="vehicleType" onChange={handleInputChange} required>
+              <option value="">Select Vehicle Type</option>
+              <option value="suv">SUV</option>
+              <option value="truck">Truck</option>
+              <option value="car">Car</option>
             </select>
-            {formData.vehicleMake && vehicleModels && vehicleModels.length > 0 && (
-              <select name="vehicleYear" onChange={handleInputChange} required>
-                <option value="">Select Year</option>
-                {[...new Set(vehicleModels.map(model => model.data.attributes.year))]
-                  .sort((a, b) => b - a)
-                  .map(year => (
-                    <option key={year} value={year}>{year}</option>
-                  ))
-                }
-              </select>
-            )}
-            {formData.vehicleYear && vehicleModels && vehicleModels.length > 0 && (
-              <select name="vehicleModel" onChange={handleInputChange} required>
-                <option value="">Select Model</option>
-                {vehicleModels
-                  .filter(model => model.data.attributes.year === parseInt(formData.vehicleYear))
-                  .map(model => (
-                    <option key={model.data.id} value={model.data.attributes.name}>{model.data.attributes.name}</option>
-                  ))
-                }
-              </select>
-            )}
+
             <input type="number" name="distance" placeholder="Distance (miles)" onChange={handleInputChange} required />
           </>
         )}
@@ -244,12 +191,13 @@ const CarbonCalculator = () => {
         </div>
       )}
 
-      {result && (
+      {result && result.carbon_kg && (
         <div className="result">
           <h3>Result:</h3>
-          <p>Carbon Emissions: {result.carbon_kg} kg CO2</p>
+          <p>Total Emissions: {Math.round(result.carbon_kg)} kg CO2</p> {/* Rounded result */}
         </div>
       )}
+
     </div>
   );
 };

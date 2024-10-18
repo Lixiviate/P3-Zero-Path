@@ -1,4 +1,3 @@
-
 //calculate Electricity emissions
 export const calculateElectricityEmissions = async (electricityValue, unit = "kwh", country = "us", state = "") => {
   try {
@@ -25,7 +24,6 @@ export const calculateElectricityEmissions = async (electricityValue, unit = "kw
 };
 
 //calculate Flight emissions
-
 export const calculateFlightEmissions = async (passengers, legs) => {
   try {
     const response = await fetch("https://www.carboninterface.com/api/v1/estimates", {
@@ -49,7 +47,6 @@ export const calculateFlightEmissions = async (passengers, legs) => {
 };
 
 //calculate Vehicle emissions
-
 export const calculateVehicleEmissions = async (distance, vehicleModelId, distanceUnit = "mi") => {
   try {
     const response = await fetch("https://www.carboninterface.com/api/v1/estimates", {
@@ -73,9 +70,8 @@ export const calculateVehicleEmissions = async (distance, vehicleModelId, distan
   }
 };
 
-//calculate Shipping emissions
-
-export const calculateShippingEmissions = async (weight, weightUnit, distance, distanceUnit, transportMethod) => {
+//calculate Shipping emissions (with default weight as lb and distance as mi)
+export const calculateShippingEmissions = async (weight, distance, transportMethod, weightUnit = "lb", distanceUnit = "mi") => {
   try {
     const response = await fetch("https://www.carboninterface.com/api/v1/estimates", {
       method: "POST",
@@ -86,9 +82,9 @@ export const calculateShippingEmissions = async (weight, weightUnit, distance, d
       body: JSON.stringify({
         type: "shipping",
         weight_value: weight,
-        weight_unit: weightUnit,
+        weight_unit: weightUnit, // Default to pounds
         distance_value: distance,
-        distance_unit: distanceUnit,
+        distance_unit: distanceUnit, // Default to miles
         transport_method: transportMethod,
       }),
     });
@@ -99,4 +95,3 @@ export const calculateShippingEmissions = async (weight, weightUnit, distance, d
     return null;
   }
 };
-
