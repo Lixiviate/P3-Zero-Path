@@ -97,10 +97,10 @@ const CarbonCalculator = () => {
         case 'shipping':
           response = await calculateShippingEmissions(
             formData.weight,
-            formData.weightUnit,
+            'lb', // Default to pounds
             formData.distance,
-            formData.distanceUnit,
-            formData.transportMethod
+            'mi', // Default to miles
+            formData.transportMethod // Selected transport method from the dropdown
           );
           break;
         default:
@@ -205,11 +205,31 @@ const CarbonCalculator = () => {
 
         {calculationType === 'shipping' && (
           <>
-            <input type="number" name="weight" placeholder="Weight" onChange={handleInputChange} required />
-            <input type="text" name="weightUnit" placeholder="Weight Unit" onChange={handleInputChange} required />
-            <input type="number" name="distance" placeholder="Distance" onChange={handleInputChange} required />
-            <input type="text" name="distanceUnit" placeholder="Distance Unit" onChange={handleInputChange} required />
-            <input type="text" name="transportMethod" placeholder="Transport Method" onChange={handleInputChange} required />
+            <input
+              type="number"
+              name="weight"
+              placeholder="Weight (lb)"
+              onChange={handleInputChange}
+              required
+            />
+            <input
+              type="number"
+              name="distance"
+              placeholder="Distance (miles)"
+              onChange={handleInputChange}
+              required
+            />
+            <select
+              name="transportMethod"
+              onChange={handleInputChange}
+              required
+            >
+              <option value="">Select Transport Method</option>
+              <option value="ship">Ship</option>
+              <option value="train">Train</option>
+              <option value="truck">Truck</option>
+              <option value="plane">Plane</option>
+            </select>
           </>
         )}
 

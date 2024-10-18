@@ -31,7 +31,7 @@ export const calculateVehicleEmissions = (distance, vehicleModelId, distanceUnit
     distance_unit: distanceUnit,
   }, API_KEY);
 
-export const calculateShippingEmissions = (weight, weightUnit, distance, distanceUnit, transportMethod) =>
+export const calculateShippingEmissions = (weight, weightUnit = 'lb', distance, distanceUnit = 'mi', transportMethod) =>
   makeRequest('/estimates', {
     type: 'shipping',
     weight_value: weight,
