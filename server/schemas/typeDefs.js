@@ -6,13 +6,14 @@ const typeDefs = `
   type Mutation {
     login(login: String!, password: String!): Auth
     addUser(username: String!, email: String!, password: String!): Auth
-    updateUser(username: String, email: String, password: String): UserUpdateResponse
+    updateUser(username: String, email: String, password: String, profilePhoto: String): UserUpdateResponse
   }
 
   type User {
     _id: ID
     username: String!
     email: String!
+    profilePhoto: String
   }
 
   type Auth {

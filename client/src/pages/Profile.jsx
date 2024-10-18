@@ -13,6 +13,7 @@ const Profile = () => {
     username: "",
     email: "",
     password: "",
+    profilePhoto: "",
   });
 
   const [message, setMessage] = useState({ text: "", type: "" });
@@ -24,16 +25,33 @@ const Profile = () => {
         username: userData.username || "",
         email: userData.email || "",
         password: "",
+        profilePhoto: userData.profilePhoto || "",
       });
     }
   }, [loading, data]);
 
   const handleChange = (event) => {
     const { name, value } = event.target;
-    setFormState({
-      ...formState,
-      [name]: value,
-    });
+    if (name !== "profilePhoto") {
+      setFormState({
+        ...formState,
+        [name]: value,
+      });
+    }
+  };
+
+  const handleFileChange = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setFormState((prevState) => ({
+          ...prevState,
+          profilePhoto: reader.result,
+        }));
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   const handleSubmit = async (event) => {
