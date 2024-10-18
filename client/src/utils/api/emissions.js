@@ -2,15 +2,6 @@ import { makeRequest } from './carboninterface';
 
 const API_KEY = import.meta.env.VITE_CARBON_INTERFACE_API_KEY;
 
-export const calculateElectricityEmissions = (electricityValue, unit = 'kwh', country = 'us', state = '') =>
-  makeRequest('/estimates', {
-    type: 'electricity',
-    electricity_unit: unit,
-    electricity_value: electricityValue,
-    country,
-    state,
-  }, API_KEY);
-
 export const calculateFlightEmissions = (passengers, departure, destination) =>
   makeRequest('/estimates', {
     type: 'flight',

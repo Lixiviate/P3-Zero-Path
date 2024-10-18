@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { useMutation } from '@apollo/client';
 import { UPDATE_USER } from '../../utils/mutations';
 import {
-  calculateElectricityEmissions,
   calculateFlightEmissions,
   calculateVehicleEmissions,
   calculateShippingEmissions,
@@ -40,14 +39,6 @@ const CarbonCalculator = () => {
 
     try {
       switch (calculationType) {
-        case 'electricity':
-          response = await calculateElectricityEmissions(
-            formData.electricityValue,
-            formData.electricityUnit,
-            formData.country,
-            formData.state
-          );
-          break;
         case 'flight':
           response = await calculateFlightEmissions(
             formData.passengers,
@@ -109,24 +100,10 @@ const CarbonCalculator = () => {
           onChange={(e) => setCalculationType(e.target.value)}
           className="select-input"
         >
-          <option value="electricity">Electricity</option>
           <option value="flight">Flight</option>
           <option value="vehicle">Vehicle</option>
           <option value="shipping">Shipping</option>
         </select>
-
-        {calculationType === 'electricity' && (
-          <>
-            <input type="number" name="electricityValue" placeholder="Electricity Value" onChange={handleInputChange} required />
-            <select name="electricityUnit" onChange={handleInputChange} required>
-              <option value="">Select Unit</option>
-              <option value="mwh">Megawatt Hours (MWh)</option>
-              <option value="kwh">Kilowatt Hours (kWh)</option>
-            </select>
-            <input type="text" name="country" placeholder="Country Code" onChange={handleInputChange} required />
-            <input type="text" name="state" placeholder="State Code (optional)" onChange={handleInputChange} />
-          </>
-        )}
 
         {calculationType === 'flight' && (
           <>
