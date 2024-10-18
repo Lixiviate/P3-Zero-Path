@@ -1,7 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import Auth from "../utils/auth";
-import PropTypes from "prop-types";
 import "../styles/Navbar.css";
 import { useQuery } from "@apollo/client";
 import { GET_ME } from "../utils/queries";
@@ -121,10 +120,6 @@ const NavbarComponent = ({ onAuthToggle }) => {
       </div>
     </nav>
   );
-};
-
-NavbarComponent.propTypes = {
-  onAuthToggle: PropTypes.func.isRequired,
 };
 
 export default NavbarComponent;
