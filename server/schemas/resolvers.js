@@ -55,7 +55,11 @@ const resolvers = {
       return { token, user };
     },
 
-    updateUser: async (parent, { username, email, password }, context) => {
+    updateUser: async (
+      parent,
+      { username, email, password, profilePhoto },
+      context
+    ) => {
       if (!context.user) {
         throw new AuthenticationError(
           "You need to be logged in to update your profile!"
@@ -92,6 +96,11 @@ const resolvers = {
       // Update password if provided (the password will be hashed by the pre-save hook)
       if (password) {
         user.password = password;
+      }
+
+      // Update profilePhoto if provided
+      if (profilePhoto) {
+        user.profilePhoto = profilePhoto;
       }
 
       // Save the updated user
