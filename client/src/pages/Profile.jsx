@@ -14,6 +14,7 @@ const Profile = () => {
     username: "",
     email: "",
     password: "",
+    profilePhoto: "",
   });
 
   const [message, setMessage] = useState({ text: "", type: "" });
@@ -24,16 +25,33 @@ const Profile = () => {
         username: userData.username || "",
         email: userData.email || "",
         password: "",
+        profilePhoto: userData.profilePhoto || "",
       });
     }
   }, [loading, userData]);
 
   const handleChange = (event) => {
     const { name, value } = event.target;
-    setFormState({
-      ...formState,
-      [name]: value,
-    });
+    if (name !== "profilePhoto") {
+      setFormState({
+        ...formState,
+        [name]: value,
+      });
+    }
+  };
+
+  const handleFileChange = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setFormState((prevState) => ({
+          ...prevState,
+          profilePhoto: reader.result,
+        }));
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   const handleSubmit = async (event) => {
@@ -88,6 +106,7 @@ const Profile = () => {
         )}
 
         <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Username Field */}
           <div>
             <label
               htmlFor="username"
@@ -104,6 +123,8 @@ const Profile = () => {
               onChange={handleChange}
             />
           </div>
+
+          {/* Email Field */}
           <div>
             <label htmlFor="email" className="block text-gray-700 text-lg mb-2">
               Email
@@ -117,6 +138,8 @@ const Profile = () => {
               onChange={handleChange}
             />
           </div>
+
+          {/* Password Field */}
           <div>
             <label
               htmlFor="password"
@@ -134,6 +157,33 @@ const Profile = () => {
               placeholder="Enter new password"
             />
           </div>
+
+          {/* Profile Photo Field */}
+          <div>
+            <label
+              htmlFor="profilePhoto"
+              className="block text-gray-700 text-lg mb-2"
+            >
+              Profile Photo
+            </label>
+            {formState.profilePhoto && (
+              <img
+                src={formState.profilePhoto}
+                alt="Profile"
+                className="mb-4 h-24 w-24 object-cover rounded-full"
+              />
+            )}
+            <input
+              type="file"
+              id="profilePhoto"
+              name="profilePhoto"
+              accept="image/*"
+              className="w-full px-4 py-2"
+              onChange={handleFileChange}
+            />
+          </div>
+
+          {/* Submit Button */}
           <button
             type="submit"
             className="w-full py-3 px-6 rounded-full text-white bg-blue-600 hover:bg-blue-700 transition-all"

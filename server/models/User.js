@@ -18,6 +18,9 @@ const userSchema = new Schema(
       type: String,
       required: true,
     },
+    profilePhoto: {
+      type: String,
+    },
   },
   {
     toJSON: {
