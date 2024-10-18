@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import Navbar from "./components/Navbar";
+import Footer from "./components/Footer";
 import AuthForm from "./components/Form/AuthForm";
 import Auth from "./utils/auth";
 import Canvas from "./components/Canvas/Canvas";
@@ -35,6 +36,7 @@ function App() {
         </div>
       )}
       <Outlet context={{ showAuth, toggleAuth }} />
+      <Footer />
     </div>
   );
 }

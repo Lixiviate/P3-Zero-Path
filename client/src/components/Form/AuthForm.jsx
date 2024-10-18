@@ -2,7 +2,6 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import LoginForm from "./LoginForm";
 import SignupForm from "./SignupForm";
-import PropTypes from 'prop-types';
 
 const AuthForm = ({ onCancel }) => {
   const [isLogin, setIsLogin] = useState(true);
@@ -10,7 +9,7 @@ const AuthForm = ({ onCancel }) => {
 
   const handleSuccessfulAuth = () => {
     navigate("/dashboard");
-    onCancel();
+    onCancel(); // Close the auth form after successful login/signup
   };
 
   return (
@@ -54,10 +53,6 @@ const AuthForm = ({ onCancel }) => {
       </button>
     </div>
   );
-};
-
-AuthForm.propTypes = {
-  onCancel: PropTypes.func.isRequired,
 };
 
 export default AuthForm;

@@ -3,11 +3,12 @@ import { useState, useEffect } from "react";
 import { GET_ME } from "../utils/queries";
 import { UPDATE_USER } from "../utils/mutations";
 import Auth from "../utils/auth";
-import Layout from "../components/Layout";
 
 const Profile = () => {
   const { loading, data } = useQuery(GET_ME);
   const [updateUser] = useMutation(UPDATE_USER);
+
+  const userData = data?.me || {};
 
   const [formState, setFormState] = useState({
     username: "",
@@ -19,8 +20,7 @@ const Profile = () => {
   const [message, setMessage] = useState({ text: "", type: "" });
 
   useEffect(() => {
-    if (!loading && data?.me) {
-      const userData = data.me;
+    if (!loading && userData) {
       setFormState({
         username: userData.username || "",
         email: userData.email || "",
@@ -28,7 +28,7 @@ const Profile = () => {
         profilePhoto: userData.profilePhoto || "",
       });
     }
-  }, [loading, data]);
+  }, [loading, userData]);
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -87,82 +87,112 @@ const Profile = () => {
   }
 
   return (
-    <Layout> {/* Wrapping content in Layout */}
-      <div className="bg-gradient-to-b from-teal-300 to-blue-500 min-h-screen p-8 flex items-center justify-center">
-        <div className="z-10 bg-white rounded-lg shadow-lg p-8 w-full max-w-lg">
-          <h1 className="text-4xl font-bold text-gray-800 mb-6 text-center">
+    <div className="bg-gradient-to-b from-teal-300 to-blue-500 min-h-screen p-8 flex items-center justify-center">
+      <div className="z-10 bg-white rounded-lg shadow-lg p-8 w-full max-w-lg">
+        <h1 className="text-4xl font-bold text-gray-800 mb-6 text-center">
+          Update Profile
+        </h1>
+
+        {message.text && (
+          <div
+            className={`text-lg mb-4 p-4 rounded ${
+              message.type === "success"
+                ? "bg-green-100 text-green-700"
+                : "bg-red-100 text-red-700"
+            }`}
+          >
+            {message.text}
+          </div>
+        )}
+
+        <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Username Field */}
+          <div>
+            <label
+              htmlFor="username"
+              className="block text-gray-700 text-lg mb-2"
+            >
+              Username
+            </label>
+            <input
+              type="text"
+              id="username"
+              name="username"
+              className="w-full px-4 py-2 rounded-md border border-gray-300 focus:ring-2 focus:ring-blue-400"
+              value={formState.username}
+              onChange={handleChange}
+            />
+          </div>
+
+          {/* Email Field */}
+          <div>
+            <label htmlFor="email" className="block text-gray-700 text-lg mb-2">
+              Email
+            </label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              className="w-full px-4 py-2 rounded-md border border-gray-300 focus:ring-2 focus:ring-blue-400"
+              value={formState.email}
+              onChange={handleChange}
+            />
+          </div>
+
+          {/* Password Field */}
+          <div>
+            <label
+              htmlFor="password"
+              className="block text-gray-700 text-lg mb-2"
+            >
+              New Password
+            </label>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              className="w-full px-4 py-2 rounded-md border border-gray-300 focus:ring-2 focus:ring-blue-400"
+              value={formState.password}
+              onChange={handleChange}
+              placeholder="Enter new password"
+            />
+          </div>
+
+          {/* Profile Photo Field */}
+          <div>
+            <label
+              htmlFor="profilePhoto"
+              className="block text-gray-700 text-lg mb-2"
+            >
+              Profile Photo
+            </label>
+            {formState.profilePhoto && (
+              <img
+                src={formState.profilePhoto}
+                alt="Profile"
+                className="mb-4 h-24 w-24 object-cover rounded-full"
+              />
+            )}
+            <input
+              type="file"
+              id="profilePhoto"
+              name="profilePhoto"
+              accept="image/*"
+              className="w-full px-4 py-2"
+              onChange={handleFileChange}
+            />
+          </div>
+
+          {/* Submit Button */}
+          <button
+            type="submit"
+            className="w-full py-3 px-6 rounded-full text-white bg-blue-600 hover:bg-blue-700 transition-all"
+          >
             Update Profile
-          </h1>
-
-          {message.text && (
-            <div
-              className={`text-lg mb-4 p-4 rounded ${
-                message.type === "success"
-                  ? "bg-green-100 text-green-700"
-                  : "bg-red-100 text-red-700"
-              }`}
-            >
-              {message.text}
-            </div>
-          )}
-
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div>
-              <label
-                htmlFor="username"
-                className="block text-gray-700 text-lg mb-2"
-              >
-                Username
-              </label>
-              <input
-                type="text"
-                id="username"
-                name="username"
-                className="w-full px-4 py-2 rounded-md border border-gray-300 focus:ring-2 focus:ring-blue-400"
-                value={formState.username}
-                onChange={handleChange}
-              />
-            </div>
-            <div>
-              <label htmlFor="email" className="block text-gray-700 text-lg mb-2">
-                Email
-              </label>
-              <input
-                type="email"
-                id="email"
-                name="email"
-                className="w-full px-4 py-2 rounded-md border border-gray-300 focus:ring-2 focus:ring-blue-400"
-                value={formState.email}
-                onChange={handleChange}
-              />
-            </div>
-            <div>
-              <label
-                htmlFor="password"
-                className="block text-gray-700 text-lg mb-2"
-              >
-                New Password
-              </label>
-              <input
-                type="password"
-                id="password"
-                name="password"
-                className="w-full px-4 py-2 rounded-md border border-gray-300 focus:ring-2 focus:ring-blue-400"
-                value={formState.password}
-                onChange={handleChange}
-                placeholder="Enter new password"
-              />
-            </div>
-            <button
-              type="submit"
-              className="w-full py-3 px-6 rounded-full text-white bg-blue-600 hover:bg-blue-700 transition-all"
-            >
-              Update Profile
-            </button>
-          </form>
-        </div>
+          </button>
+        </form>
       </div>
-    </Layout>
+    </div>
   );
 };
 

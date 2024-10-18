@@ -3,7 +3,6 @@ import { useMutation } from "@apollo/client";
 import { ADD_USER } from "../../utils/mutations";
 import { useNavigate } from "react-router-dom";
 import Auth from "../../utils/auth";
-import PropTypes from 'prop-types';
 
 const SignupForm = ({ onSuccess }) => {
   const [signupFormData, setSignupFormData] = useState({
@@ -106,10 +105,6 @@ const SignupForm = ({ onSuccess }) => {
       {errorMessage && <div className="text-red-500 mt-2">{errorMessage}</div>}
     </form>
   );
-};
-
-SignupForm.propTypes = {
-  onSuccess: PropTypes.func,
 };
 
 export default SignupForm;
