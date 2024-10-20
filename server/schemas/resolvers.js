@@ -115,6 +115,15 @@ const resolvers = {
         user,
       };
     },
+    // Requires a password to update credentials
+    verifyCredentials: async (parent, { email, password }) => {
+      const user = await User.findOne({ email });
+      if (!user) {
+        return false;
+      }
+      const correctPw = await user.isCorrectPassword(password);
+      return correctPw;
+    },
   },
 };
 

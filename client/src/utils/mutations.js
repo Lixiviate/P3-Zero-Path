@@ -21,6 +21,7 @@ export const UPDATE_USER = gql`
         email
         profilePhoto
       }
+      token
     }
   }
 `;
@@ -46,5 +47,11 @@ export const ADD_USER = gql`
         username
       }
     }
+  }
+`;
+
+export const VERIFY_CREDENTIALS = gql`
+  mutation verifyCredentials($email: String!, $password: String!) {
+    verifyCredentials(email: $email, password: $password)
   }
 `;

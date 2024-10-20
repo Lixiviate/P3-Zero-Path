@@ -7,6 +7,7 @@ const typeDefs = `
     login(login: String!, password: String!): Auth
     addUser(username: String!, email: String!, password: String!): Auth
     updateUser(username: String, email: String, password: String, profilePhoto: String): UserUpdateResponse
+    verifyCredentials(email: String!, password: String!): Boolean!
   }
 
   type User {
@@ -25,6 +26,7 @@ const typeDefs = `
     success: Boolean!
     message: String
     user: User
+    token: ID
   }
 `;
 

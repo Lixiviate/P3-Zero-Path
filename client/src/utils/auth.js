@@ -32,13 +32,15 @@ class AuthService {
     return localStorage.getItem("id_token");
   }
 
-  login(idToken) {
+  login(idToken, redirect = true) {
     localStorage.setItem("id_token", idToken);
 
     const loginEvent = new CustomEvent("userLoggedIn");
     window.dispatchEvent(loginEvent);
 
-    window.location.assign("/dashboard");
+    if (redirect) {
+      window.location.assign("/dashboard");
+    }
   }
 
   logout() {
