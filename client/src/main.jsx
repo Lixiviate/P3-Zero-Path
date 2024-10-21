@@ -18,6 +18,7 @@ import Profile from "./pages/Profile";
 import About from "./pages/About";
 import Goals from "./pages/Goals";
 import Auth from "./utils/auth";
+import Tracker from "./pages/Tracker";
 
 const httpLink = createHttpLink({
   uri: "/graphql",
@@ -74,6 +75,10 @@ const router = createBrowserRouter([
       {
         path: "/goals",
         element: <Goals />,
+      },
+      {
+        path: "/tracker",
+        element: <Tracker />,
       },
       {
         path: "*",
