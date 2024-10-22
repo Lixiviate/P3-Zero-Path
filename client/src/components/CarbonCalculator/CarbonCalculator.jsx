@@ -57,7 +57,7 @@ const SlidePanel = ({ isOpen, onClose, children }) => {
 
 const CarbonCalculator = () => {
   const [calculationType, setCalculationType] = useState(
-    CALCULATION_TYPES.FLIGHT
+    CALCULATION_TYPES.FLIGHT,
   );
   const [result, setResult] = useState(null);
   const [formData, setFormData] = useState({});
@@ -123,7 +123,7 @@ const CarbonCalculator = () => {
         return await calculateFlightEmissions(
           formData.passengers,
           formData.departure.toUpperCase(),
-          formData.destination.toUpperCase()
+          formData.destination.toUpperCase(),
         );
 
       case CALCULATION_TYPES.VEHICLE: {
@@ -145,7 +145,7 @@ const CarbonCalculator = () => {
 
         return await calculateVehicleEmissions(
           formData.distance,
-          vehicleModelId
+          vehicleModelId,
         );
       }
 
@@ -155,7 +155,7 @@ const CarbonCalculator = () => {
           "lb",
           formData.distance,
           "mi",
-          formData.transportMethod
+          formData.transportMethod,
         );
 
       default:
@@ -347,7 +347,7 @@ const CarbonCalculator = () => {
                     <option key={type} value={type}>
                       {type.toUpperCase()} ({factor} kg CO2/mile)
                     </option>
-                  )
+                  ),
                 )}
               </select>
             </div>
@@ -525,7 +525,7 @@ const CarbonCalculator = () => {
                     Per passenger:{" "}
                     {Math.round(
                       (result.carbon_kg || result.carbon_g / 1000) /
-                        formData.passengers
+                        formData.passengers,
                     )}{" "}
                     kg CO2
                   </p>

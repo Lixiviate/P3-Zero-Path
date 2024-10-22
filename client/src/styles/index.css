@@ -14,6 +14,7 @@ body {
 }
 
 .glow-effect:hover {
-  box-shadow: 0 0 25px rgba(72, 191, 227, 0.8),
+  box-shadow:
+    0 0 25px rgba(72, 191, 227, 0.8),
     0 0 40px rgba(72, 191, 227, 0.6);
 }

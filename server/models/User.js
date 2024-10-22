@@ -26,7 +26,7 @@ const userSchema = new Schema(
     toJSON: {
       virtuals: true,
     },
-  }
+  },
 );
 
 // Hash user password before saving
