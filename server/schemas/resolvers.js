@@ -7,7 +7,7 @@ const resolvers = {
     me: async (parent, args, context) => {
       if (context.user) {
         const userData = await User.findById(context.user._id).select(
-          "-__v -password"
+          "-__v -password",
         );
         return userData;
       }
@@ -58,11 +58,11 @@ const resolvers = {
     updateUser: async (
       parent,
       { username, email, password, profilePhoto },
-      context
+      context,
     ) => {
       if (!context.user) {
         throw new AuthenticationError(
-          "You need to be logged in to update your profile!"
+          "You need to be logged in to update your profile!",
         );
       }
 

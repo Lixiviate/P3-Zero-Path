@@ -37,8 +37,8 @@ const authLink = setContext((_, { headers }) => {
 const errorLink = onError(({ graphQLErrors, networkError }) => {
   if (graphQLErrors) {
     graphQLErrors.forEach(({ message }) => {
-      if (message.includes('jwt expired')) {
-        console.log('Token expired. Logging out...');
+      if (message.includes("jwt expired")) {
+        console.log("Token expired. Logging out...");
         Auth.logout(); // This should redirect to the login page
       }
     });
