@@ -7,7 +7,7 @@ const resolvers = {
     me: async (parent, args, context) => {
       if (context.user) {
         const userData = await User.findById(context.user._id).select(
-          "-__v -password",
+          "-__v -password"
         );
         return userData;
       }
@@ -57,19 +57,18 @@ const resolvers = {
 
     updateUser: async (
       parent,
-      { username, email, password, profilePhoto },
-      context,
+      { username, email, password, profilePhoto, carbonData },
+      context
     ) => {
       if (!context.user) {
         throw new AuthenticationError(
-          "You need to be logged in to update your profile!",
+          "You need to be logged in to update your profile!"
         );
       }
 
-      // Fetch the currently logged-in user
       const user = await User.findById(context.user._id);
 
-      // Check and update username if provided
+      // Update fields as before
       if (username && username !== user.username) {
         const existingUsername = await User.findOne({ username });
         if (
@@ -81,7 +80,6 @@ const resolvers = {
         user.username = username;
       }
 
-      // Check and update email if provided
       if (email && email !== user.email) {
         const existingEmail = await User.findOne({ email });
         if (
@@ -93,25 +91,25 @@ const resolvers = {
         user.email = email;
       }
 
-      // Update password if provided (the password will be hashed by the pre-save hook)
       if (password) {
         user.password = password;
       }
 
-      // Update profilePhoto if provided
       if (profilePhoto) {
         user.profilePhoto = profilePhoto;
       }
 
-      // Save the updated user
+      if (carbonData && carbonData.carbon_kg !== undefined) {
+        user.carbonData.carbon_kg += carbonData.carbon_kg;
+      }
+
       await user.save();
 
-      // Generate a new token after successful update
       const token = signToken(user);
 
       return {
         success: true,
-        token,
+        message: "Profile updated successfully.",
         user,
       };
     },
