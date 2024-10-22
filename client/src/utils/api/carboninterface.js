@@ -1,16 +1,16 @@
-const BASE_URL = 'https://www.carboninterface.com/api/v1';
+const BASE_URL = "https://www.carboninterface.com/api/v1";
 
-export async function makeRequest(endpoint, data, apiKey, method = 'POST') {
+export async function makeRequest(endpoint, data, apiKey, method = "POST") {
   try {
     const options = {
       method,
       headers: {
-        'Authorization': `Bearer ${apiKey}`,
-        'Content-Type': 'application/json',
+        Authorization: `Bearer ${apiKey}`,
+        "Content-Type": "application/json",
       },
     };
 
-    if (method === 'POST' && data) {
+    if (method === "POST" && data) {
       options.body = JSON.stringify(data);
     }
 
