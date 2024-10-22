@@ -19,17 +19,16 @@ ZeroPath is a full-stack web application designed to guide users on their journe
 4. **Earn Rewards**: Receive koi fish rewards for achieving milestones in reducing your environmental impact.
 5. **Explore Resources**: Learn more about sustainable practices and technologies through provided educational content.
 
-## Example(s)
+## Demo Website + Screenshots
 
-- [Link to Demo]()
+### [Link to Demo](https://p3-zero-path.onrender.com/)
 
-  - Example of the homepage, dashboard, and profile page:
-
-    ![ZeroPath Homepage]()
-
-    ![ZeroPath Dashboard]()
-
-    ![ZeroPath Profile]()
+| Page      | Screenshot                                            |
+| --------- | ----------------------------------------------------- |
+| Homepage  | ![ZeroPath Homepage](/images/zeropath-homepage.png)   |
+| Dashboard | ![ZeroPath Dashboard](/images/zeropath-dashboard.png) |
+| Profile   | ![ZeroPath Profile](/images/zeropath-profile.png)     |
+| Tracker   | ![ZeroPath Tracker](/images/zeropath-tracker.png)     |
 
 ## Source Code
 
