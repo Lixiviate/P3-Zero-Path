@@ -8,7 +8,7 @@ import {
 } from "../../utils/api/emissions";
 import "./../../styles/CarbonCalculator.css";
 
-//  standard emissions factors for vehicle types
+// Standard emissions factors for vehicle types
 const vehicleEmissionFactors = {
   suv: 0.328, // Example value: kg CO2 per mile
   truck: 0.503, // Example value: kg CO2 per mile
@@ -16,7 +16,7 @@ const vehicleEmissionFactors = {
 };
 
 const CarbonCalculator = () => {
-  const [calculationType, setCalculationType] = useState("electricity");
+  const [calculationType, setCalculationType] = useState("flight");
   const [result, setResult] = useState(null);
   const [formData, setFormData] = useState({});
   const [error, setError] = useState(null);
@@ -46,13 +46,15 @@ const CarbonCalculator = () => {
             formData.destination
           );
           break;
+
         case "vehicle": {
           const emissionFactor = vehicleEmissionFactors[formData.vehicleType];
           if (!emissionFactor) throw new Error("Invalid vehicle type");
-          const emissions = formData.distance * emissionFactor; // Calculate emissions based on distance and emission factor
-          response = { data: { attributes: { carbon_kg: emissions } } }; // Mock response based on the calculated emissions
+          const emissions = formData.distance * emissionFactor; // Calculate emissions
+          response = { data: { attributes: { carbon_kg: emissions } } }; // Mock response
           break;
         }
+
         case "shipping":
           response = await calculateShippingEmissions(
             formData.weight,
@@ -62,18 +64,27 @@ const CarbonCalculator = () => {
             formData.transportMethod
           );
           break;
+
         default:
           throw new Error("Invalid calculation type");
       }
 
       if (response && response.data) {
-        setResult(response.data.attributes);
+        const attributes = response.data.attributes;
+        const carbon_kg =
+          attributes.carbon_kg !== undefined
+            ? attributes.carbon_kg
+            : attributes.carbon_g !== undefined
+            ? attributes.carbon_g / 1000
+            : 0;
+        setResult({ carbon_kg });
+
         // Save carbon data
         try {
           await updateUser({
             variables: {
               carbonData: {
-                carbon_kg: response.data.attributes.carbon_kg,
+                carbon_kg,
               },
             },
           });
@@ -195,12 +206,9 @@ const CarbonCalculator = () => {
       {result && (
         <div className="result">
           <h3>Result:</h3>
-          {result.carbon_kg && (
-            <p>Total Emissions: {Math.round(result.carbon_kg)} kg CO2</p> // Vehicle or general case
-          )}
-          {result.carbon_g && (
-            <p>Total Emissions: {Math.round(result.carbon_g / 1000)} kg CO2</p> // Shipping might return grams
-          )}
+          <p>
+            Total Emissions: {Math.round(result.carbon_kg)} kg CO<sub>2</sub>
+          </p>
         </div>
       )}
     </div>
