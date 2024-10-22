@@ -26,7 +26,7 @@ const startApolloServer = async () => {
     expressMiddleware(server, {
       context: authMiddleware,
       bodyParserConfig: { limit: "10mb" },
-    })
+    }),
   );
 
   if (process.env.NODE_ENV === "production") {
