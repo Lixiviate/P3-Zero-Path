@@ -21,6 +21,19 @@ const userSchema = new Schema(
     profilePhoto: {
       type: String,
     },
+    goals: [{
+      type: String,
+    }],
+    accomplishedGoals: [{
+      goal: {
+        type: String,
+        required: true
+      },
+      accomplishedAt: {
+        type: String,
+        required: true
+      }
+    }],
   },
   {
     toJSON: {

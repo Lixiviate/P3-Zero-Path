@@ -7,6 +7,11 @@ export const GET_ME = gql`
       username
       email
       profilePhoto
+      goals
+      accomplishedGoals {
+        goal
+        accomplishedAt
+      }
     }
   }
 `;

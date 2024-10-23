@@ -6,7 +6,14 @@ const typeDefs = `
   type Mutation {
     login(login: String!, password: String!): Auth
     addUser(username: String!, email: String!, password: String!): Auth
-    updateUser(username: String, email: String, password: String, profilePhoto: String): UserUpdateResponse
+    updateUser(
+      username: String
+      email: String
+      password: String
+      profilePhoto: String
+      goals: [String]
+      accomplishedGoals: [AccomplishedGoalInput]
+    ): UserUpdateResponse
     verifyCredentials(email: String!, password: String!): Boolean!
   }
 
@@ -15,6 +22,18 @@ const typeDefs = `
     username: String!
     email: String!
     profilePhoto: String
+    goals: [String]
+    accomplishedGoals: [AccomplishedGoal]
+  }
+
+  type AccomplishedGoal {
+    goal: String!
+    accomplishedAt: String!
+  }
+
+  input AccomplishedGoalInput {
+    goal: String!
+    accomplishedAt: String!
   }
 
   type Auth {

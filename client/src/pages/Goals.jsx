@@ -54,9 +54,8 @@ const GOAL_CATEGORIES = {
     ]
   }
 };
-
 const Goals = () => {
-  const { loading, data } = useQuery(GET_ME);
+  const { loading, data, refetch } = useQuery(GET_ME);
   const [updateUser] = useMutation(UPDATE_USER);
   const [goals, setGoals] = useState([]);
   const [newGoal, setNewGoal] = useState("");
@@ -71,50 +70,68 @@ const Goals = () => {
     }
   }, [data]);
 
+  useEffect(() => {
+    refetch();
+  }, [goals.length, accomplishedGoals.length, refetch]);
+
   const handleAddGoal = async (e) => {
     e.preventDefault();
     const goalToAdd = customGoal || newGoal;
     if (!goalToAdd.trim()) return;
-
-    const categoryName = GOAL_CATEGORIES[selectedCategory].name;
-    const goalWithCategory = `[${categoryName}] ${goalToAdd}`;
-    const updatedGoals = [...goals, goalWithCategory];
-    setGoals(updatedGoals);
-    setNewGoal("");
-    setCustomGoal("");
-
+  
     try {
-      await updateUser({
+      const categoryName = GOAL_CATEGORIES[selectedCategory].name;
+      const goalWithCategory = `[${categoryName}] ${goalToAdd}`;
+      const updatedGoals = [...goals, goalWithCategory];
+  
+      // Add goals without accomplishedGoals for new goals
+      const { data: updateData } = await updateUser({
         variables: { 
-          goals: updatedGoals,
-          accomplishedGoals 
+          goals: updatedGoals
         },
       });
+  
+      if (updateData?.updateUser?.success) {
+        setGoals(updateData.updateUser.user.goals || []);
+        setNewGoal("");
+        setCustomGoal("");
+        await refetch();
+      }
     } catch (err) {
       console.error("Error updating goals:", err);
     }
   };
 
-  const handleAccomplishGoal = async (goalToAccomplish, index) => {
-    // Remove goal from active goals
-    const updatedGoals = goals.filter((_, i) => i !== index);
-    // Add to accomplished goals with timestamp
-    const accomplishedGoal = {
-      goal: goalToAccomplish,
-      accomplishedAt: new Date().toISOString()
-    };
-    const updatedAccomplishedGoals = [...accomplishedGoals, accomplishedGoal];
-
-    setGoals(updatedGoals);
-    setAccomplishedGoals(updatedAccomplishedGoals);
-
+  const handleAccomplishGoal = async (goalToAccomplish) => {
     try {
-      await updateUser({
+      // Create updated goals array
+      const updatedGoals = goals.filter(goal => goal !== goalToAccomplish);
+      
+      // Format the accomplished goal properly
+      const newAccomplishedGoal = {
+        goal: goalToAccomplish,
+        accomplishedAt: new Date().toISOString()
+      };
+  
+      // Make sure all accomplishedGoals have the correct format
+      const formattedAccomplishedGoals = [...accomplishedGoals, newAccomplishedGoal].map(goal => ({
+        goal: goal.goal,
+        accomplishedAt: goal.accomplishedAt
+      }));
+  
+      // Update database
+      const { data: updateData } = await updateUser({
         variables: { 
           goals: updatedGoals,
-          accomplishedGoals: updatedAccomplishedGoals
+          accomplishedGoals: formattedAccomplishedGoals
         },
       });
+  
+      if (updateData?.updateUser?.success) {
+        setGoals(updateData.updateUser.user.goals || []);
+        setAccomplishedGoals(updateData.updateUser.user.accomplishedGoals || []);
+        await refetch();
+      }
     } catch (err) {
       console.error("Error updating goals:", err);
     }
@@ -162,7 +179,7 @@ const Goals = () => {
                                 {goal.replace(`[${category.name}]`, '').trim()}
                               </span>
                               <button
-                                onClick={() => handleAccomplishGoal(goal, index)}
+                                onClick={() => handleAccomplishGoal(goal)}
                                 className="px-4 py-1.5 bg-teal-300 text-white text-sm gap-4 rounded-full hover:bg-teal-400 transition-all ml-4 whitespace-nowrap"
                               >
                                 Mark Complete
@@ -183,26 +200,23 @@ const Goals = () => {
 
             {accomplishedGoals.length > 0 && (
               <div className="mb-8">
-              <h2 className="text-2xl font-semibold text-gray-700 mb-4">
-                Accomplished Goals
-              </h2>
-              <div className="bg-gray-50 p-4 rounded-lg space-y-2">
-                {accomplishedGoals.map((accomplishedGoal, index) => (
-                  <div key={index} className="flex items-center justify-between">
-                    {/* Display the goal */}
-                    <span className="text-gray-600 flex-grow">
-                      {accomplishedGoal.goal.split('] ')[1]}
-                    </span>
-                    {/* Display the accomplished date */}
-                    <span className="text-sm text-gray-500 pl-4 whitespace-nowrap">
-                      {new Date(accomplishedGoal.accomplishedAt).toLocaleDateString()}
-                    </span>
-                  </div>
-                ))}
+                <h2 className="text-2xl font-semibold text-gray-700 mb-4">
+                  Accomplished Goals
+                </h2>
+                <div className="bg-gray-50 p-4 rounded-lg space-y-2">
+                  {accomplishedGoals.map((accomplishedGoal, index) => (
+                    <div key={index} className="flex items-center justify-between">
+                      <span className="text-gray-600 flex-grow">
+                        {accomplishedGoal.goal.split('] ')[1]}
+                      </span>
+                      <span className="text-sm text-gray-500 pl-4 whitespace-nowrap">
+                        {new Date(accomplishedGoal.accomplishedAt).toLocaleDateString()}
+                      </span>
+                    </div>
+                  ))}
+                </div>
               </div>
-            </div>
             )}
-
             <div>
               <h2 className="text-2xl font-semibold text-gray-700 mb-4">
                 Add New Goal
