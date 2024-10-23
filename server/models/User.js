@@ -10,10 +10,34 @@ const userSchema = new Schema(
       unique: true,
       match: [/.+@.+\..+/, "Must use a valid email address"],
     },
-    password: { type: String, required: true },
-    profilePhoto: { type: String },
-    carbonData: {
-      carbon_kg: { type: Number, default: 0 },
+    password: {
+      type: String,
+      required: true,
+    },
+    profilePhoto: {
+      type: String,
+    },
+    goals: [
+      {
+        type: String,
+      },
+    ],
+    accomplishedGoals: [
+      {
+        goal: {
+          type: String,
+          required: true,
+        },
+        accomplishedAt: {
+          type: String,
+          required: true,
+        },
+      },
+    ],
+  },
+  {
+    toJSON: {
+      virtuals: true,
     },
   },
   { toJSON: { virtuals: true } }

@@ -6,12 +6,16 @@ export const UPDATE_USER = gql`
     $email: String
     $password: String
     $profilePhoto: String
+    $goals: [String]
+    $accomplishedGoals: [AccomplishedGoalInput]
   ) {
     updateUser(
       username: $username
       email: $email
       password: $password
       profilePhoto: $profilePhoto
+      goals: $goals
+      accomplishedGoals: $accomplishedGoals
     ) {
       success
       message
@@ -20,7 +24,13 @@ export const UPDATE_USER = gql`
         username
         email
         profilePhoto
+        goals
+        accomplishedGoals {
+          goal
+          accomplishedAt
+        }
       }
+      token
     }
   }
 `;
@@ -46,5 +56,11 @@ export const ADD_USER = gql`
         username
       }
     }
+  }
+`;
+
+export const VERIFY_CREDENTIALS = gql`
+  mutation verifyCredentials($email: String!, $password: String!) {
+    verifyCredentials(email: $email, password: $password)
   }
 `;

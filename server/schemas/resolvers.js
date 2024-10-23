@@ -37,6 +37,16 @@ const resolvers = {
       return { token, user };
     },
 
+    verifyCredentials: async (parent, { email, password }) => {
+      const user = await User.findOne({ email });
+      if (!user) {
+        return false;
+      }
+
+      const correctPw = await user.isCorrectPassword(password);
+      return correctPw;
+    },
+
     addUser: async (parent, { username, email, password }) => {
       // Check if username or email is already in use
       const existingUserByUsername = await User.findOne({ username });
@@ -57,7 +67,7 @@ const resolvers = {
 
     updateUser: async (
       parent,
-      { username, email, password, profilePhoto, carbonData },
+      { username, email, password, profilePhoto, goals, accomplishedGoals },
       context
     ) => {
       if (!context.user) {
@@ -99,17 +109,25 @@ const resolvers = {
         user.profilePhoto = profilePhoto;
       }
 
-      if (carbonData && carbonData.carbon_kg !== undefined) {
-        user.carbonData.carbon_kg += carbonData.carbon_kg;
+      // Update goals if provided
+      if (goals !== undefined) {
+        user.goals = goals;
       }
 
+      // Update accomplishedGoals if provided
+      if (accomplishedGoals !== undefined) {
+        user.accomplishedGoals = accomplishedGoals;
+      }
+
+      // Save the updated user
       await user.save();
 
       const token = signToken(user);
 
       return {
         success: true,
-        message: "Profile updated successfully.",
+        message: "Profile updated successfully",
+        token,
         user,
       };
     },
