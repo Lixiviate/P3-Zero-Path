@@ -67,7 +67,7 @@ const resolvers = {
 
     updateUser: async (
       parent,
-      { username, email, password, profilePhoto },
+      { username, email, password, profilePhoto, goals, accomplishedGoals },
       context,
     ) => {
       if (!context.user) {
@@ -111,6 +111,16 @@ const resolvers = {
       // Update profilePhoto if provided
       if (profilePhoto) {
         user.profilePhoto = profilePhoto;
+      }
+
+      // Update goals if provided
+      if (goals !== undefined) {
+        user.goals = goals;
+      }
+
+      // Update accomplishedGoals if provided
+      if (accomplishedGoals !== undefined) {
+        user.accomplishedGoals = accomplishedGoals;
       }
 
       // Save the updated user
