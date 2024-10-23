@@ -145,10 +145,6 @@ const Profile = () => {
     setShowVerification(false);
   };
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
   return (
     <div className="bg-gradient-to-b from-teal-300 to-blue-500 min-h-screen p-8 flex items-center justify-center">
       <div className="z-10 bg-white rounded-lg shadow-lg p-8 w-full max-w-lg">
