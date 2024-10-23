@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 import { useQuery, useMutation } from "@apollo/client";
 import { GET_ME } from "../utils/queries";
 import { UPDATE_USER, VERIFY_CREDENTIALS } from "../utils/mutations";
@@ -16,19 +16,24 @@ const Profile = () => {
     profilePhoto: "",
   });
 
+  const [originalData, setOriginalData] = useState(null);
   const [currentPassword, setCurrentPassword] = useState("");
   const [showVerification, setShowVerification] = useState(false);
   const [message, setMessage] = useState({ text: "", type: "" });
 
   useEffect(() => {
     if (!loading && data?.me) {
-      setFormState(prevState => ({
-        ...prevState,
+      const userData = {
         username: data.me.username || "",
         email: data.me.email || "",
-        password: "",
         profilePhoto: data.me.profilePhoto || "",
+      };
+      setFormState((prevState) => ({
+        ...prevState,
+        ...userData,
+        password: "",
       }));
+      setOriginalData(userData);
     }
   }, [loading, data]);
 
@@ -58,7 +63,19 @@ const Profile = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    setShowVerification(true);
+
+    // Check if any fields have changed
+    const fieldsChanged =
+      formState.username !== originalData.username ||
+      formState.email !== originalData.email ||
+      formState.profilePhoto !== originalData.profilePhoto ||
+      formState.password !== "";
+
+    if (fieldsChanged) {
+      setShowVerification(true);
+    } else {
+      setMessage({ text: "No changes detected.", type: "info" });
+    }
   };
 
   const handleVerification = async (event) => {
@@ -71,7 +88,7 @@ const Profile = () => {
 
       if (verifyData.verifyCredentials) {
         // If verification successful, proceed with update
-        updateUserProfile();
+        await updateUserProfile();
       } else {
         setMessage({ text: "Invalid current password", type: "error" });
       }
@@ -94,12 +111,20 @@ const Profile = () => {
         refetch();
       }
 
+      // Update original data to the new data
+      const updatedUserData = {
+        username: updateData.updateUser.user.username || "",
+        email: updateData.updateUser.user.email || "",
+        profilePhoto: updateData.updateUser.user.profilePhoto || "",
+      };
+      setOriginalData(updatedUserData);
+
       setMessage({ text: "Profile updated successfully!", type: "success" });
       setShowVerification(false);
       setCurrentPassword("");
-      setFormState(prevState => ({
+      setFormState((prevState) => ({
         ...prevState,
-        password: ""
+        password: "",
       }));
     } catch (err) {
       if (err.message.includes("Username already in use")) {
@@ -136,7 +161,9 @@ const Profile = () => {
             className={`text-lg mb-4 p-4 rounded ${
               message.type === "success"
                 ? "bg-green-100 text-green-700"
-                : "bg-red-100 text-red-700"
+                : message.type === "error"
+                ? "bg-red-100 text-red-700"
+                : "bg-blue-100 text-blue-700"
             }`}
           >
             {message.text}
@@ -145,8 +172,12 @@ const Profile = () => {
 
         {!showVerification ? (
           <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Username Field */}
             <div>
-              <label htmlFor="username" className="block text-gray-700 text-lg mb-2">
+              <label
+                htmlFor="username"
+                className="block text-gray-700 text-lg mb-2"
+              >
                 Username
               </label>
               <input
@@ -159,8 +190,12 @@ const Profile = () => {
               />
             </div>
 
+            {/* Email Field */}
             <div>
-              <label htmlFor="email" className="block text-gray-700 text-lg mb-2">
+              <label
+                htmlFor="email"
+                className="block text-gray-700 text-lg mb-2"
+              >
                 Email
               </label>
               <input
@@ -173,8 +208,12 @@ const Profile = () => {
               />
             </div>
 
+            {/* Password Field */}
             <div>
-              <label htmlFor="password" className="block text-gray-700 text-lg mb-2">
+              <label
+                htmlFor="password"
+                className="block text-gray-700 text-lg mb-2"
+              >
                 New Password
               </label>
               <input
@@ -188,8 +227,12 @@ const Profile = () => {
               />
             </div>
 
+            {/* Profile Photo Field */}
             <div>
-              <label htmlFor="profilePhoto" className="block text-gray-700 text-lg mb-2">
+              <label
+                htmlFor="profilePhoto"
+                className="block text-gray-700 text-lg mb-2"
+              >
                 Profile Photo
               </label>
               {formState.profilePhoto && (
@@ -219,7 +262,10 @@ const Profile = () => {
         ) : (
           <form onSubmit={handleVerification} className="space-y-6">
             <div>
-              <label htmlFor="currentPassword" className="block text-gray-700 text-lg mb-2">
+              <label
+                htmlFor="currentPassword"
+                className="block text-gray-700 text-lg mb-2"
+              >
                 Current Password
               </label>
               <input
