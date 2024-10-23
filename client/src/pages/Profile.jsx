@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useQuery, useMutation } from "@apollo/client";
 import { GET_ME } from "../utils/queries";
 import { UPDATE_USER, VERIFY_CREDENTIALS } from "../utils/mutations";
@@ -72,6 +72,7 @@ const Profile = () => {
       formState.password !== "";
 
     if (fieldsChanged) {
+      setMessage({ text: "", type: "" });
       setShowVerification(true);
     } else {
       setMessage({ text: "No changes detected.", type: "info" });
@@ -142,7 +143,6 @@ const Profile = () => {
 
   const handleGoBack = () => {
     setShowVerification(false);
-    setMessage({ text: "", type: "" });
   };
 
   if (loading) {
