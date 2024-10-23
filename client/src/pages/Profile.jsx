@@ -1,14 +1,13 @@
+import React, { useState, useEffect } from "react";
 import { useQuery, useMutation } from "@apollo/client";
-import { useState, useEffect } from "react";
 import { GET_ME } from "../utils/queries";
-import { UPDATE_USER } from "../utils/mutations";
+import { UPDATE_USER, VERIFY_CREDENTIALS } from "../utils/mutations";
 import Auth from "../utils/auth";
 
 const Profile = () => {
-  const { loading, data } = useQuery(GET_ME);
+  const { loading, data, refetch } = useQuery(GET_ME);
   const [updateUser] = useMutation(UPDATE_USER);
-
-  const userData = data?.me || {};
+  const [verifyCredentials] = useMutation(VERIFY_CREDENTIALS);
 
   const [formState, setFormState] = useState({
     username: "",
@@ -17,18 +16,26 @@ const Profile = () => {
     profilePhoto: "",
   });
 
+  const [originalData, setOriginalData] = useState(null);
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [showVerification, setShowVerification] = useState(false);
   const [message, setMessage] = useState({ text: "", type: "" });
 
   useEffect(() => {
-    if (!loading && userData) {
-      setFormState({
-        username: userData.username || "",
-        email: userData.email || "",
+    if (!loading && data?.me) {
+      const userData = {
+        username: data.me.username || "",
+        email: data.me.email || "",
+        profilePhoto: data.me.profilePhoto || "",
+      };
+      setFormState((prevState) => ({
+        ...prevState,
+        ...userData,
         password: "",
-        profilePhoto: userData.profilePhoto || "",
-      });
+      }));
+      setOriginalData(userData);
     }
-  }, [loading, userData]);
+  }, [loading, data]);
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -57,17 +64,69 @@ const Profile = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
+    // Check if any fields have changed
+    const fieldsChanged =
+      formState.username !== originalData.username ||
+      formState.email !== originalData.email ||
+      formState.profilePhoto !== originalData.profilePhoto ||
+      formState.password !== "";
+
+    if (fieldsChanged) {
+      setMessage({ text: "", type: "" });
+      setShowVerification(true);
+    } else {
+      setMessage({ text: "No changes detected.", type: "info" });
+    }
+  };
+
+  const handleVerification = async (event) => {
+    event.preventDefault();
+
     try {
-      const { data } = await updateUser({
+      const { data: verifyData } = await verifyCredentials({
+        variables: { email: data?.me?.email, password: currentPassword },
+      });
+
+      if (verifyData.verifyCredentials) {
+        // If verification successful, proceed with update
+        await updateUserProfile();
+      } else {
+        setMessage({ text: "Invalid current password", type: "error" });
+      }
+    } catch (err) {
+      setMessage({
+        text: "An error occurred while verifying credentials.",
+        type: "error",
+      });
+    }
+  };
+
+  const updateUserProfile = async () => {
+    try {
+      const { data: updateData } = await updateUser({
         variables: { ...formState },
       });
 
-      // Log the user in with the new token to refresh the session
-      if (data.updateUser.token) {
-        Auth.login(data.updateUser.token); // Refresh the token after profile update
+      if (updateData.updateUser.token) {
+        Auth.login(updateData.updateUser.token, false);
+        refetch();
       }
 
+      // Update original data to the new data
+      const updatedUserData = {
+        username: updateData.updateUser.user.username || "",
+        email: updateData.updateUser.user.email || "",
+        profilePhoto: updateData.updateUser.user.profilePhoto || "",
+      };
+      setOriginalData(updatedUserData);
+
       setMessage({ text: "Profile updated successfully!", type: "success" });
+      setShowVerification(false);
+      setCurrentPassword("");
+      setFormState((prevState) => ({
+        ...prevState,
+        password: "",
+      }));
     } catch (err) {
       if (err.message.includes("Username already in use")) {
         setMessage({ text: "Username already in use", type: "error" });
@@ -80,6 +139,10 @@ const Profile = () => {
         });
       }
     }
+  };
+
+  const handleGoBack = () => {
+    setShowVerification(false);
   };
 
   if (loading) {
@@ -98,99 +161,140 @@ const Profile = () => {
             className={`text-lg mb-4 p-4 rounded ${
               message.type === "success"
                 ? "bg-green-100 text-green-700"
-                : "bg-red-100 text-red-700"
+                : message.type === "error"
+                ? "bg-red-100 text-red-700"
+                : "bg-blue-100 text-blue-700"
             }`}
           >
             {message.text}
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Username Field */}
-          <div>
-            <label
-              htmlFor="username"
-              className="block text-gray-700 text-lg mb-2"
-            >
-              Username
-            </label>
-            <input
-              type="text"
-              id="username"
-              name="username"
-              className="w-full px-4 py-2 rounded-md border border-gray-300 focus:ring-2 focus:ring-blue-400"
-              value={formState.username}
-              onChange={handleChange}
-            />
-          </div>
-
-          {/* Email Field */}
-          <div>
-            <label htmlFor="email" className="block text-gray-700 text-lg mb-2">
-              Email
-            </label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              className="w-full px-4 py-2 rounded-md border border-gray-300 focus:ring-2 focus:ring-blue-400"
-              value={formState.email}
-              onChange={handleChange}
-            />
-          </div>
-
-          {/* Password Field */}
-          <div>
-            <label
-              htmlFor="password"
-              className="block text-gray-700 text-lg mb-2"
-            >
-              New Password
-            </label>
-            <input
-              type="password"
-              id="password"
-              name="password"
-              className="w-full px-4 py-2 rounded-md border border-gray-300 focus:ring-2 focus:ring-blue-400"
-              value={formState.password}
-              onChange={handleChange}
-              placeholder="Enter new password"
-            />
-          </div>
-
-          {/* Profile Photo Field */}
-          <div>
-            <label
-              htmlFor="profilePhoto"
-              className="block text-gray-700 text-lg mb-2"
-            >
-              Profile Photo
-            </label>
-            {formState.profilePhoto && (
-              <img
-                src={formState.profilePhoto}
-                alt="Profile"
-                className="mb-4 h-24 w-24 object-cover rounded-full"
+        {!showVerification ? (
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Username Field */}
+            <div>
+              <label
+                htmlFor="username"
+                className="block text-gray-700 text-lg mb-2"
+              >
+                Username
+              </label>
+              <input
+                type="text"
+                id="username"
+                name="username"
+                className="w-full px-4 py-2 rounded-md border border-gray-300 focus:ring-2 focus:ring-blue-400"
+                value={formState.username}
+                onChange={handleChange}
               />
-            )}
-            <input
-              type="file"
-              id="profilePhoto"
-              name="profilePhoto"
-              accept="image/*"
-              className="w-full px-4 py-2"
-              onChange={handleFileChange}
-            />
-          </div>
+            </div>
 
-          {/* Submit Button */}
-          <button
-            type="submit"
-            className="w-full py-3 px-6 rounded-full text-white bg-blue-600 hover:bg-blue-700 transition-all"
-          >
-            Update Profile
-          </button>
-        </form>
+            {/* Email Field */}
+            <div>
+              <label
+                htmlFor="email"
+                className="block text-gray-700 text-lg mb-2"
+              >
+                Email
+              </label>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                className="w-full px-4 py-2 rounded-md border border-gray-300 focus:ring-2 focus:ring-blue-400"
+                value={formState.email}
+                onChange={handleChange}
+              />
+            </div>
+
+            {/* Password Field */}
+            <div>
+              <label
+                htmlFor="password"
+                className="block text-gray-700 text-lg mb-2"
+              >
+                New Password
+              </label>
+              <input
+                type="password"
+                id="password"
+                name="password"
+                className="w-full px-4 py-2 rounded-md border border-gray-300 focus:ring-2 focus:ring-blue-400"
+                value={formState.password}
+                onChange={handleChange}
+                placeholder="Enter new password"
+              />
+            </div>
+
+            {/* Profile Photo Field */}
+            <div>
+              <label
+                htmlFor="profilePhoto"
+                className="block text-gray-700 text-lg mb-2"
+              >
+                Profile Photo
+              </label>
+              {formState.profilePhoto && (
+                <img
+                  src={formState.profilePhoto}
+                  alt="Profile"
+                  className="mb-4 h-24 w-24 object-cover rounded-full"
+                />
+              )}
+              <input
+                type="file"
+                id="profilePhoto"
+                name="profilePhoto"
+                accept="image/*"
+                className="w-full px-4 py-2"
+                onChange={handleFileChange}
+              />
+            </div>
+
+            <button
+              type="submit"
+              className="w-full py-3 px-6 rounded-full text-white bg-blue-600 hover:bg-blue-700 transition-all"
+            >
+              Update Profile
+            </button>
+          </form>
+        ) : (
+          <form onSubmit={handleVerification} className="space-y-6">
+            <div>
+              <label
+                htmlFor="currentPassword"
+                className="block text-gray-700 text-lg mb-2"
+              >
+                Current Password
+              </label>
+              <input
+                type="password"
+                id="currentPassword"
+                name="currentPassword"
+                className="w-full px-4 py-2 rounded-md border border-gray-300 focus:ring-2 focus:ring-blue-400"
+                value={currentPassword}
+                onChange={(e) => setCurrentPassword(e.target.value)}
+                required
+              />
+            </div>
+            <div className="flex space-x-4">
+              <button
+                type="submit"
+                className="flex-1 py-3 px-6 rounded-full text-white bg-blue-600 hover:bg-blue-700 transition-all"
+              >
+                Verify & Update
+              </button>
+              <button
+                type="button"
+                onClick={handleGoBack}
+                className="flex-1 py-3 px-6 rounded-full text-blue-600 bg-white border border-blue-600 hover:bg-blue-50 transition-all"
+              >
+                Go Back
+              </button>
+            </div>
+          </form>
+        )}
       </div>
     </div>
   );

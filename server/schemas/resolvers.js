@@ -37,6 +37,16 @@ const resolvers = {
       return { token, user };
     },
 
+    verifyCredentials: async (parent, { email, password }) => {
+      const user = await User.findOne({ email });
+      if (!user) {
+        return false;
+      }
+
+      const correctPw = await user.isCorrectPassword(password);
+      return correctPw;
+    },
+
     addUser: async (parent, { username, email, password }) => {
       // Check if username or email is already in use
       const existingUserByUsername = await User.findOne({ username });
@@ -111,6 +121,7 @@ const resolvers = {
 
       return {
         success: true,
+        message: "Profile updated successfully",
         token,
         user,
       };
