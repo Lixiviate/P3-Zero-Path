@@ -16,11 +16,11 @@ const GOAL_CATEGORIES = {
       "Choose airlines with newer, more efficient fleets",
       "Travel during off-peak seasons for better flight capacity",
       "Pack lighter to reduce flight weight",
-      "Use train travel for short-distance trips instead of flying"
-    ]
+      "Use train travel for short-distance trips instead of flying",
+    ],
   },
   VEHICLE: {
-    name: "Vehicle Usage",  
+    name: "Vehicle Usage",
     options: [
       "Switch to electric/hybrid vehicle",
       "Reduce weekly driving miles by 25%",
@@ -33,14 +33,14 @@ const GOAL_CATEGORIES = {
       "Walk or bike for short distances",
       "Join a car-sharing program",
       "Regular vehicle maintenance for optimal efficiency",
-      "Avoid idling vehicle unnecessarily"
-    ]
+      "Avoid idling vehicle unnecessarily",
+    ],
   },
   SHIPPING: {
     name: "Shipping Impact",
     options: [
       "Consolidate shipments to reduce frequency",
-      "Choose ground shipping over air freight", 
+      "Choose ground shipping over air freight",
       "Optimize packaging to reduce weight",
       "Use local suppliers when possible",
       "Select eco-friendly packaging materials",
@@ -50,9 +50,9 @@ const GOAL_CATEGORIES = {
       "Bundle orders to reduce separate deliveries",
       "Support companies with sustainable shipping practices",
       "Use reusable shipping containers",
-      "Minimize return shipments through careful purchasing"
-    ]
-  }
+      "Minimize return shipments through careful purchasing",
+    ],
+  },
 };
 const Goals = () => {
   const { loading, data, refetch } = useQuery(GET_ME);
@@ -78,19 +78,19 @@ const Goals = () => {
     e.preventDefault();
     const goalToAdd = customGoal || newGoal;
     if (!goalToAdd.trim()) return;
-  
+
     try {
       const categoryName = GOAL_CATEGORIES[selectedCategory].name;
       const goalWithCategory = `[${categoryName}] ${goalToAdd}`;
       const updatedGoals = [...goals, goalWithCategory];
-  
+
       // Add goals without accomplishedGoals for new goals
       const { data: updateData } = await updateUser({
-        variables: { 
-          goals: updatedGoals
+        variables: {
+          goals: updatedGoals,
         },
       });
-  
+
       if (updateData?.updateUser?.success) {
         setGoals(updateData.updateUser.user.goals || []);
         setNewGoal("");
@@ -105,31 +105,36 @@ const Goals = () => {
   const handleAccomplishGoal = async (goalToAccomplish) => {
     try {
       // Create updated goals array
-      const updatedGoals = goals.filter(goal => goal !== goalToAccomplish);
-      
+      const updatedGoals = goals.filter((goal) => goal !== goalToAccomplish);
+
       // Format the accomplished goal properly
       const newAccomplishedGoal = {
         goal: goalToAccomplish,
-        accomplishedAt: new Date().toISOString()
+        accomplishedAt: new Date().toISOString(),
       };
-  
+
       // Make sure all accomplishedGoals have the correct format
-      const formattedAccomplishedGoals = [...accomplishedGoals, newAccomplishedGoal].map(goal => ({
+      const formattedAccomplishedGoals = [
+        ...accomplishedGoals,
+        newAccomplishedGoal,
+      ].map((goal) => ({
         goal: goal.goal,
-        accomplishedAt: goal.accomplishedAt
+        accomplishedAt: goal.accomplishedAt,
       }));
-  
+
       // Update database
       const { data: updateData } = await updateUser({
-        variables: { 
+        variables: {
           goals: updatedGoals,
-          accomplishedGoals: formattedAccomplishedGoals
+          accomplishedGoals: formattedAccomplishedGoals,
         },
       });
-  
+
       if (updateData?.updateUser?.success) {
         setGoals(updateData.updateUser.user.goals || []);
-        setAccomplishedGoals(updateData.updateUser.user.accomplishedGoals || []);
+        setAccomplishedGoals(
+          updateData.updateUser.user.accomplishedGoals || []
+        );
         await refetch();
       }
     } catch (err) {
@@ -148,8 +153,6 @@ const Goals = () => {
     setCustomGoal("");
   };
 
-  if (loading) return <div>Loading...</div>;
-
   return (
     <div className="bg-gradient-to-b from-teal-300 to-blue-500 min-h-screen flex items-center justify-center p-8">
       <div className="relative min-h-screen">
@@ -165,18 +168,28 @@ const Goals = () => {
               </h2>
               {goals.length > 0 ? (
                 <div className="space-y-4">
-                  {Object.values(GOAL_CATEGORIES).map(category => {
-                    const categoryGoals = goals.filter(goal => goal.includes(`[${category.name}]`));
+                  {Object.values(GOAL_CATEGORIES).map((category) => {
+                    const categoryGoals = goals.filter((goal) =>
+                      goal.includes(`[${category.name}]`)
+                    );
                     if (categoryGoals.length === 0) return null;
 
                     return (
-                      <div key={category.name} className="bg-gray-50 p-4 rounded-lg">
-                        <h3 className="font-medium text-gray-700 mb-2">{category.name}</h3>
+                      <div
+                        key={category.name}
+                        className="bg-gray-50 p-4 rounded-lg"
+                      >
+                        <h3 className="font-medium text-gray-700 mb-2">
+                          {category.name}
+                        </h3>
                         <ul className="space-y-2">
                           {categoryGoals.map((goal, index) => (
-                            <li key={index} className="flex items-center justify-between p-2 rounded gap-4">
+                            <li
+                              key={index}
+                              className="flex items-center justify-between p-2 rounded gap-4"
+                            >
                               <span className="text-gray-600">
-                                {goal.replace(`[${category.name}]`, '').trim()}
+                                {goal.replace(`[${category.name}]`, "").trim()}
                               </span>
                               <button
                                 onClick={() => handleAccomplishGoal(goal)}
@@ -205,12 +218,17 @@ const Goals = () => {
                 </h2>
                 <div className="bg-gray-50 p-4 rounded-lg space-y-2">
                   {accomplishedGoals.map((accomplishedGoal, index) => (
-                    <div key={index} className="flex items-center justify-between">
+                    <div
+                      key={index}
+                      className="flex items-center justify-between"
+                    >
                       <span className="text-gray-600 flex-grow">
-                        {accomplishedGoal.goal.split('] ')[1]}
+                        {accomplishedGoal.goal.split("] ")[1]}
                       </span>
                       <span className="text-sm text-gray-500 pl-4 whitespace-nowrap">
-                        {new Date(accomplishedGoal.accomplishedAt).toLocaleDateString()}
+                        {new Date(
+                          accomplishedGoal.accomplishedAt
+                        ).toLocaleDateString()}
                       </span>
                     </div>
                   ))}
@@ -248,12 +266,16 @@ const Goals = () => {
                     onChange={handlePresetGoalChange}
                     className="w-full p-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400"
                   >
-                    <option value="">Choose a preset goal or enter custom below</option>
-                    {GOAL_CATEGORIES[selectedCategory].options.map((option, index) => (
-                      <option key={index} value={option}>
-                        {option}
-                      </option>
-                    ))}
+                    <option value="">
+                      Choose a preset goal or enter custom below
+                    </option>
+                    {GOAL_CATEGORIES[selectedCategory].options.map(
+                      (option, index) => (
+                        <option key={index} value={option}>
+                          {option}
+                        </option>
+                      )
+                    )}
                   </select>
                 </div>
 
